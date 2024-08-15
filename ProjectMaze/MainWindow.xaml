@@ -10,12 +10,7 @@
         Title="MainWindow" 
         Height="450" Width="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="135"/>
-        </Grid.ColumnDefinitions>
-        
-        <Viewbox Grid.Column="0">
+        <Viewbox>
             <ItemsControl Name="Map">
                 <ItemsControl.Background>
                     <ImageBrush ImageSource="src/bkg.png"/>
@@ -30,7 +25,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type local:Cell}">
-                                    <Border Width="30" Height="30" Background="{Binding Bkg}">
+                                    <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" Background="{Binding Bkg}">
                                         <Image Source="{Binding File}" />
                                     </Border>
                                 </DataTemplate>
@@ -40,35 +35,29 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Viewbox>
-        
-        <Grid Grid.Column="1"
-              GotFocus="BarGrid_GotFocus">
-            <ListBox>
+
+        <Grid Name="GenerateWindow">
+            <ListBox VerticalAlignment="Center"
+                     HorizontalAlignment="Center">
                 <Label Height="25" Width="120"
-                       Content="Ширина:"
-                       GotFocus="BarGrid_GotFocus"/>
+                       Content="Ширина:"/>
                 <TextBox Height="30" Width="120"
                          VerticalContentAlignment="Center"
                          KeyDown="CheckOnlyDigitsKeyDown"
-                         Text="{Binding RowsCount, Mode=OneWayToSource}"
-                         GotFocus="BarGrid_GotFocus"/>
+                         Text="{Binding RowsCount, Mode=TwoWay}"/>
                 <Label Height="25" Width="120"
-                       Content="Высота:"
-                       GotFocus="BarGrid_GotFocus"/>
+                       Content="Высота:"/>
                 <TextBox Height="30" Width="120"
                          VerticalContentAlignment="Center"
                          KeyDown="CheckOnlyDigitsKeyDown"
-                         Text="{Binding ColumnsCount, Mode=OneWayToSource}"
-                         GotFocus="BarGrid_GotFocus"/>
+                         Text="{Binding ColumnsCount, Mode=TwoWay}"/>
                 <Label Height="25" Width="120"
-                       Content="Сложность:"
-                       GotFocus="BarGrid_GotFocus"/>
+                       Content="Сложность:"/>
                 <ComboBox Height="30" Width="120"
                           Text="0"
                           VerticalContentAlignment="Center"
                           SelectedItem="0"
-                          SelectedIndex="0"
-                          GotFocus="BarGrid_GotFocus">
+                          SelectedIndex="0">
                     <ComboBoxItem>Легко</ComboBoxItem>
                     <ComboBoxItem>Средне</ComboBoxItem>
                     <ComboBoxItem>Сложно</ComboBoxItem>
@@ -76,16 +65,9 @@
                 <Button Margin="0,10,0,0" 
                         Height="30" Width="120"
                         Content="Сгенерировать"
-                        Click="MapGenerateButton"
-                        GotFocus="BarGrid_GotFocus">
+                        Click="MapGenerateButton">
                 </Button>
             </ListBox>
-
-            <ListView Visibility="Hidden" Grid.ColumnSpan="2" Grid.RowSpan="2">
-                <TextBox Name="inputTB" Width="150" Height="40" Text="lalka"></TextBox>
-                <TextBox Name="output" Width="auto" Height="50"></TextBox>
-                <Button Width="120" Height="50" Click="Button_Click"></Button>
-            </ListView>
         </Grid>
     </Grid>
 </Window>

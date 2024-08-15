@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Policy;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,91 +19,91 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace ProjectMaze
 {
     public partial class MainWindow : Window
     {
         ObservableCollection<ObservableCollection<Cell>> mapCells;
+
+        public event PropertyChangedEventHandler PropertyChanged;
         Player player { get; set; }
 
-        static int RowsCount = 15;
-        static int ColumnsCount = 15;
+        int _rowsCount = 30;
+        public int RowsCount
+        {
+            get => _rowsCount;
+            set
+            {
+                if (value > 100)
+                    _rowsCount = 100;
+                else
+                    _rowsCount = value;
+            }
+        }
 
-        bool isGenerated = false;
+        int _columnsCount = 30;
+        public int ColumnsCount
+        {
+            get => _columnsCount;
+            set
+            {
+                if (value > 100)
+                    _columnsCount = 100;
+                else
+                    _columnsCount = value;
+            }
+        }
 
         Key currentKey = Key.None;
 
         public MainWindow()
         {
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var hash = System.Security.Cryptography.SHA1.Create();
-
-            output.Text = string.Concat(hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(inputTB.Text)).Select(x => x.ToString("X2")));
+            this.DataContext = this;
         }
         private void GeneratePlayerPosition(int[,] mas)
         {
             Random rnd = new Random();
             int rowPlayer, colPlayer;
-            
+
 
             do //Размещение игрока
             {
-                rowPlayer = rnd.Next(1, RowsCount);
-                colPlayer = rnd.Next(1, ColumnsCount);
+                rowPlayer = rnd.Next(1, ColumnsCount - 1);
+                colPlayer = rnd.Next(1, RowsCount - 1);
             } while (mas[rowPlayer, colPlayer] == 1 || mas[rowPlayer, colPlayer] == 5 || mas[rowPlayer, colPlayer] == 8); // Изменить проверку
 
-            player = new Player { Row = rowPlayer, Col = colPlayer};
-
             mas[rowPlayer, colPlayer] = 5;
+            player = new Player { Row = rowPlayer, Col = colPlayer };
+            Console.WriteLine($"player generated pos: {rowPlayer},{colPlayer}");
+
         }
         private void MapGenerateButton(object sender, RoutedEventArgs e)
         {
             int rows = RowsCount, columns = ColumnsCount;
-            int[,] mas = new int[15, 15] //Изначальный массив лабиринта
-            {
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1 },
-                { 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1 },
-                { 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1 },
-                { 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1 },
-                { 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1 },
-                { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 8, 9 },
-                { 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 8, 1 },
-                { 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 8, 1 },
-                { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1 },
-                { 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1 },
-                { 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1 },
-                { 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
-                { 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1 },
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            };
-
+            Console.WriteLine($"rows = {rows}, columns = {columns}");
+            int[,] mas = new int[ColumnsCount, RowsCount];
             GeneratePlayerPosition(mas);
             mapCells = new ObservableCollection<ObservableCollection<Cell>>();
-            for (int i = 0; i < RowsCount; i++)
+            for (int i = 0; i < ColumnsCount; i++)
             {
                 mapCells.Add(new ObservableCollection<Cell>());
                 for (int j = 0; j < RowsCount; j++)
                 {
                     switch (mas[i, j])
                     {
-                        case 1:
-                            mapCells[i].Add(new Wall { Row = i, Col = j });
-                            break;
                         case 0:
                             mapCells[i].Add(new Space { Row = i, Col = j });
+                            break;
+                        case 1:
+                            mapCells[i].Add(new Wall { Row = i, Col = j });
                             break;
                         case 5:
                             mapCells[i].Add(new Player { Row = i, Col = j });
                             break;
                         case 8:
-                            mapCells[i].Add(new Klyuch { Row = i, Col = j });
+                            mapCells[i].Add(new Point { Row = i, Col = j });
                             break;
                         case 9:
                             mapCells[i].Add(new Exit { Row = i, Col = j });
@@ -109,10 +113,8 @@ namespace ProjectMaze
             }
 
             Map.ItemsSource = mapCells;
-            isGenerated = true;
-            Map.Focus();
+            GenerateWindow.Visibility = Visibility.Collapsed;
         }
-
         private void CheckOnlyDigitsKeyDown(object sender, KeyEventArgs e)
         {
             try
@@ -136,12 +138,7 @@ namespace ProjectMaze
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            
-            
-
-            Console.WriteLine($"pressed {currentKey}");
-
-            if (e.IsRepeat)
+            if (e.IsRepeat || e.Key == Key.None)
                 return;
 
             currentKey = e.Key;
@@ -152,12 +149,15 @@ namespace ProjectMaze
                 case Key.Right:
                 case Key.Down:
                 case Key.Left:
+                    Console.WriteLine($"pressed {currentKey}");
                     Move(currentKey);
-                    Console.WriteLine($"Ход совершен.");
                     break;
                 case Key.Escape:
                     if (MessageBox.Show("Начать заново?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        MapGenerateButton(null, null);
+                    {
+                        GenerateWindow.Visibility = Visibility.Visible;
+                        Keyboard.ClearFocus();
+                    }
                     break;
             }
 
@@ -169,8 +169,6 @@ namespace ProjectMaze
         }
         private void Move(Key pressed)
         {
-            if (!isGenerated)
-                return;
             int dx = 0, dy = 0;
             switch (pressed)
             {
@@ -182,17 +180,17 @@ namespace ProjectMaze
             }
 
             int X = player.Col, Y = player.Row;
-            Console.WriteLine($"Y = {Y}, X = {X}");
+
             int nextY = Y + dy, nextX = X + dx;
 
-            if (nextY < 0 || nextY > 14) return; // 14 надо заменить на константы размера
-            if (nextX < 0 || nextX > 14) return;
+            if (nextX < 0 || nextX > RowsCount - 1) return;
+            if (nextY < 0 || nextY > ColumnsCount - 1) return;
 
             Cell target = mapCells[nextY][nextX];
 
-            if (target is Klyuch)
-                player.Score++;
-            if (target is Exit && player.Score != 0)
+            //if (target is Point)
+            //    player.Score++;
+            if (target is Exit)
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     Win();
@@ -205,18 +203,12 @@ namespace ProjectMaze
                 player.Row = nextY;
                 player.Col = nextX;
                 player.Step++;
+                Console.WriteLine($"Ход совершен.");
             }
-        }
+            else
+                Console.WriteLine($"Ход невозможен.");
 
-        private void BarGrid_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if(isGenerated)
-            {
-                Console.WriteLine("Generated and Focus cleared");
-                Keyboard.ClearFocus();
-                Map.Focus();
-            }
-                
+            Console.WriteLine($"X = {nextX},Y = {nextY}");
         }
     }
 }
