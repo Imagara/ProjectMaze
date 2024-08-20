@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Media;
 
 namespace ProjectMaze
@@ -8,14 +9,14 @@ namespace ProjectMaze
     public abstract class Cell : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public int Row, Col;
+        public int x, y;
         private int _cellWidth = 30;
         public virtual int CellWidth
         {
             get
             {
-                if (Row % 2 != 0)
-                    _cellWidth = 15;
+                if (y % 2 != 0) // если нечетн
+                    _cellWidth = 3;//3
                 return _cellWidth;
             }
             set
@@ -30,8 +31,8 @@ namespace ProjectMaze
         {
             get
             {
-                if (Col % 2 != 0)
-                    _cellHeight = 15;
+                if (x % 2 != 0)
+                    _cellHeight = 3;//3
                 return _cellHeight;
             }
             set
@@ -41,6 +42,8 @@ namespace ProjectMaze
             }
         }
         public virtual bool IsTransient { get; set; }
+        public virtual bool IsVisited { get; set; }
+        public virtual string TestText { get => $"[{x}][{y}]"; set { } }
 
         string _file = "empty.png";
         public virtual Brush Bkg { get => Brushes.Transparent; set { } }

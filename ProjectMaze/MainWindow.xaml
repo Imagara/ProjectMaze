@@ -26,7 +26,11 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type local:Cell}">
                                     <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" Background="{Binding Bkg}">
-                                        <Image Source="{Binding File}" />
+                                        <Grid>
+                                            <Image Source="{Binding File}" Stretch="Fill"/>
+                                            <TextBlock Text="{Binding TestText}"></TextBlock>
+                                        </Grid>
+
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -44,13 +48,13 @@
                 <TextBox Height="30" Width="120"
                          VerticalContentAlignment="Center"
                          KeyDown="CheckOnlyDigitsKeyDown"
-                         Text="{Binding RowsCount, Mode=TwoWay}"/>
+                         Text="{Binding RowsCount, Mode=OneWayToSource}"/>
                 <Label Height="25" Width="120"
                        Content="Высота:"/>
                 <TextBox Height="30" Width="120"
                          VerticalContentAlignment="Center"
                          KeyDown="CheckOnlyDigitsKeyDown"
-                         Text="{Binding ColumnsCount, Mode=TwoWay}"/>
+                         Text="{Binding ColumnsCount, Mode=OneWayToSource}"/>
                 <Label Height="25" Width="120"
                        Content="Сложность:"/>
                 <ComboBox Height="30" Width="120"
