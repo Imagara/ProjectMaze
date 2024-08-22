@@ -2,24 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ProjectMaze
 {
@@ -116,7 +101,6 @@ namespace ProjectMaze
             x /= 2; y /= 2;
             Cell cell = new Space();
             cell.x = first.x + x; cell.y = first.y + y;
-            Console.WriteLine($"GetWall: x:{cell.x}, y:{cell.y}");
             return cell;
         }
         private Cell GetRandomUnVisitedCell(Cell[,] mapArray)
@@ -214,8 +198,6 @@ namespace ProjectMaze
                         mapCells[i].Add(new Wall { x = i, y = j });
                 }
             }
-
-
 
             Map.ItemsSource = mapCells;
             GenerateWindow.Visibility = Visibility.Collapsed;
