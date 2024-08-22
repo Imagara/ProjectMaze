@@ -11,33 +11,31 @@
         Height="450" Width="800">
     <Grid>
         <Viewbox>
-            <ItemsControl Name="Map">
-                <ItemsControl.Background>
-                    <ImageBrush ImageSource="src/bkg.png"/>
-                </ItemsControl.Background>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ItemsControl ItemsSource="{Binding}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type local:Cell}">
-                                    <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" Background="{Binding Bkg}">
-                                        <Grid>
+            <Border>
+                <ItemsControl Name="Map">
+                    <ItemsControl.Background>
+                        <ImageBrush ImageSource="src/background.png"/>
+                    </ItemsControl.Background>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type local:Cell}">
+                                        <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" Background="{Binding Background}">
                                             <Image Source="{Binding File}" Stretch="Fill"/>
-                                            <TextBlock Text="{Binding TestText}"></TextBlock>
-                                        </Grid>
-
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
         </Viewbox>
 
         <Grid Name="GenerateWindow">
@@ -48,24 +46,13 @@
                 <TextBox Height="30" Width="120"
                          VerticalContentAlignment="Center"
                          KeyDown="CheckOnlyDigitsKeyDown"
-                         Text="{Binding RowsCount, Mode=OneWayToSource}"/>
+                         Text="{Binding RowsCount, Mode=TwoWay}"/>
                 <Label Height="25" Width="120"
                        Content="Высота:"/>
                 <TextBox Height="30" Width="120"
                          VerticalContentAlignment="Center"
                          KeyDown="CheckOnlyDigitsKeyDown"
-                         Text="{Binding ColumnsCount, Mode=OneWayToSource}"/>
-                <Label Height="25" Width="120"
-                       Content="Сложность:"/>
-                <ComboBox Height="30" Width="120"
-                          Text="0"
-                          VerticalContentAlignment="Center"
-                          SelectedItem="0"
-                          SelectedIndex="0">
-                    <ComboBoxItem>Легко</ComboBoxItem>
-                    <ComboBoxItem>Средне</ComboBoxItem>
-                    <ComboBoxItem>Сложно</ComboBoxItem>
-                </ComboBox>
+                         Text="{Binding ColumnsCount, Mode=TwoWay}"/>
                 <Button Margin="0,10,0,0" 
                         Height="30" Width="120"
                         Content="Сгенерировать"

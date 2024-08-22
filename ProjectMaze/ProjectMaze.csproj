@@ -2,8 +2,8 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-  <LangVersion Condition="'$(MSBuildProjectExtension)'=='.csproj'">preview</LangVersion>
-</PropertyGroup>
+    <LangVersion Condition="'$(MSBuildProjectExtension)'=='.csproj'">preview</LangVersion>
+  </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -99,14 +99,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="src\brick.png" />
-    <Resource Include="src\empty.png" />
     <Resource Include="src\key.png" />
     <Resource Include="src\player.png" />
     <Resource Include="src\star.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="src\bkg.png" />
+    <Resource Include="src\background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="src\wall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="src\empty.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

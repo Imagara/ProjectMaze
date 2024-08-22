@@ -81,16 +81,16 @@ namespace ProjectMaze
 
         }
 
-        List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
+        private List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
         {
-            int dist = 2;
+            int walkDist = 2;
             int x = cell.x;
             int y = cell.y;
 
-            Cell left = new Space { x = x - dist, y = y };
-            Cell up = new Space { x = x, y = y - dist };
-            Cell right = new Space { x = x + dist, y = y };
-            Cell down = new Space { x = x, y = y + dist };
+            Cell left = new Space { x = x - walkDist, y = y };
+            Cell up = new Space { x = x, y = y - walkDist };
+            Cell right = new Space { x = x + walkDist, y = y };
+            Cell down = new Space { x = x, y = y + walkDist };
 
             List<Cell> nlist = [left, up, right, down];
             List<Cell> newlist = new();
@@ -108,7 +108,7 @@ namespace ProjectMaze
 
             return newlist;
         }
-        Cell GetWallBetweenCells(Cell first, Cell second)
+        private Cell GetWallBetweenCells(Cell first, Cell second)
         {
             int x, y;
             x = second.x - first.x;
@@ -119,7 +119,7 @@ namespace ProjectMaze
             Console.WriteLine($"GetWall: x:{cell.x}, y:{cell.y}");
             return cell;
         }
-        Cell GetRandomUnVisitedCell(Cell[,] mapArray)
+        private Cell GetRandomUnVisitedCell(Cell[,] mapArray)
         {
             for (int i = 0; i < ColumnsCount; i += 2)
             {
@@ -133,7 +133,7 @@ namespace ProjectMaze
         }
         private void MapGenerateButton(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine($"Generating..\n\n\n\n");
+            Console.WriteLine($"Generating..\n\n\n");
             int rows = RowsCount, columns = ColumnsCount;
 
             Console.WriteLine($"rows = {rows}, columns = {columns}");
@@ -193,7 +193,7 @@ namespace ProjectMaze
                 else if (GetRandomUnVisitedCell(mapArray) != null)
                 {
                     currentCell = GetRandomUnVisitedCell(mapArray);
-                    isRandomGenerated= true;
+                    isRandomGenerated = true;
                 }
                 else
                 {

@@ -43,10 +43,8 @@ namespace ProjectMaze
         }
         public virtual bool IsTransient { get; set; }
         public virtual bool IsVisited { get; set; }
-        public virtual string TestText { get => $"[{x}][{y}]"; set { } }
-
         string _file = "empty.png";
-        public virtual Brush Bkg { get => Brushes.Transparent; set { } }
+        public virtual Brush Background { get => Brushes.Transparent; set { } }
         public virtual string File
         {
             get => GetImageUri(_file);
@@ -84,16 +82,6 @@ namespace ProjectMaze
                 OnPropertyChanged();
             }
         }
-        int score = 1;
-        public int Score
-        {
-            get => score;
-            set
-            {
-                score = value;
-                OnPropertyChanged("Score");
-            }
-        }
         private int _step;
         public int Step
         {
@@ -105,15 +93,32 @@ namespace ProjectMaze
             }
         }
 
+        int score = 1;
+        public int Score
+        {
+            get => score;
+            set
+            {
+                score = value;
+                OnPropertyChanged("Score");
+            }
+        }
     }
     class Wall : Cell
     {
-        string _file = "brick.png";
+        string _file = "wall.png";
         public override string File { get => GetImageUri(_file); set { _file = value; OnPropertyChanged("File"); } }
 
-        Brush bkg = Brushes.Black;
-        public override Brush Bkg { get => bkg; set { bkg = value; OnPropertyChanged(); } }
-
+        Brush background = Brushes.Black;
+        public override Brush Background 
+        {
+            get => background; 
+            set 
+            { 
+                background = value;
+                OnPropertyChanged(); 
+            }
+        }
     }
     class Point : Cell
     {
@@ -130,13 +135,13 @@ namespace ProjectMaze
             }
         }
 
-        Brush bkg = Brushes.Transparent;
-        public override Brush Bkg
+        Brush background = Brushes.Transparent;
+        public override Brush Background
         {
-            get => bkg;
+            get => background;
             set
             {
-                bkg = value;
+                background = value;
                 OnPropertyChanged();
             }
         }
@@ -156,13 +161,13 @@ namespace ProjectMaze
             }
         }
 
-        Brush bkg = Brushes.Transparent;
-        public override Brush Bkg
+        Brush background = Brushes.Transparent;
+        public override Brush Background
         {
-            get => bkg;
+            get => background;
             set
             {
-                bkg = value;
+                background = value;
                 OnPropertyChanged();
             }
         }
