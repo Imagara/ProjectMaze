@@ -81,34 +81,28 @@ namespace ProjectMaze
 
         }
 
-        List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray)
+        List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
         {
             int dist = 2;
             int x = cell.x;
             int y = cell.y;
+
             Cell left = new Space { x = x - dist, y = y };
             Cell up = new Space { x = x, y = y - dist };
             Cell right = new Space { x = x + dist, y = y };
             Cell down = new Space { x = x, y = y + dist };
 
-
             List<Cell> nlist = [left, up, right, down];
-
             List<Cell> newlist = new();
-
 
             foreach (Cell n in nlist)
             {
-                //Console.WriteLine($"TEST GetNeighbours - x:{n.x}, y:{n.y}");
-                if (n.x >= 0 && n.x < width && n.y >= 0 && n.y < height) // and cell isvisited = false 
+                if (n.x >= 0 && n.x < width && n.y >= 0 && n.y < height) // Если в пределах лабиринта
                 {
-                    //Console.WriteLine($"[UNV]Cell GetNeighbours - x:{n.x}, y:{n.y}");
-                    if (mapArray[n.x, n.y] == null || !mapArray[n.x, n.y].IsVisited)
-                    {
+                    if (isVisitedCheck && (mapArray[n.x, n.y] == null || !mapArray[n.x, n.y].IsVisited))
                         newlist.Add(n);
-                        Console.WriteLine($"[V]Cell GetNeighbours - x:{n.x}, y:{n.y}");
-                    }
-
+                    else if (!isVisitedCheck)
+                        newlist.Add(n);
                 }
             }
 
@@ -125,8 +119,21 @@ namespace ProjectMaze
             Console.WriteLine($"GetWall: x:{cell.x}, y:{cell.y}");
             return cell;
         }
+        Cell GetRandomUnVisitedCell(Cell[,] mapArray)
+        {
+            for (int i = 0; i < ColumnsCount; i += 2)
+            {
+                for (int j = 0; j < RowsCount; j += 2)
+                {
+                    if (mapArray[i, j] == null)
+                        return new Space { x = i, y = j };
+                }
+            }
+            return null;
+        }
         private void MapGenerateButton(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine($"Generating..\n\n\n\n");
             int rows = RowsCount, columns = ColumnsCount;
 
             Console.WriteLine($"rows = {rows}, columns = {columns}");
@@ -143,67 +150,63 @@ namespace ProjectMaze
                 IsVisited = true
             };
             mapArray[startCell.x, startCell.y] = startCell;
+            Cell lastCell = startCell;
             Cell currentCell = startCell;
             Random rnd = new Random();
+            bool isRandomGenerated = false;
 
             List<Cell> neighbours;
             do
             {
-                neighbours = GetNeighbours(currentCell, columns, rows, mapArray);
-                Console.WriteLine($"CurrentCell: x:{currentCell.x}, y:{currentCell.y}, neighbours count: {neighbours.Count()}");
+                if (isRandomGenerated)
+                {
+                    neighbours = GetNeighbours(currentCell, columns, rows, mapArray, !isRandomGenerated);
+                    isRandomGenerated = false;
+                }
+                else
+                {
+                    neighbours = GetNeighbours(currentCell, columns, rows, mapArray);
+                }
+                Console.WriteLine($"Текущая ячейка: [{currentCell.x}][{currentCell.y}], соседей: {neighbours.Count()}");
 
-                if (neighbours.Count() > 0)
+                if (neighbours.Count() != 0)
                 {
                     int rand = rnd.Next(neighbours.Count());
 
                     Cell neighbourCell = neighbours[rand];
-                    Console.WriteLine($"Cell Selected: x:{neighbourCell.x}, y:{neighbourCell.y}");
+                    Console.WriteLine($"Выбрана ячейка для хода: [{neighbourCell.x}][{neighbourCell.y}]");
 
                     neighbourCell.IsVisited = true;
                     mapArray[neighbourCell.x, neighbourCell.y] = neighbourCell;
 
                     Cell wall = GetWallBetweenCells(currentCell, neighbourCell);
                     mapArray[wall.x, wall.y] = wall;
-                    Console.WriteLine($"Wall removed: x:{wall.x}, y:{wall.y}");
-
+                    Console.WriteLine($"Удалена стена: [{wall.x}][{wall.y}]");
+                    lastCell = currentCell;
                     currentCell = neighbourCell;
                 }
+                else if (neighbours.Count() == 0 && lastCell != currentCell)
+                {
+                    currentCell = lastCell;
+                    Console.WriteLine($"Возврат на [{lastCell.x}][{lastCell.y}]");
+                }
+                else if (GetRandomUnVisitedCell(mapArray) != null)
+                {
+                    currentCell = GetRandomUnVisitedCell(mapArray);
+                    isRandomGenerated= true;
+                }
                 else
-                    Console.WriteLine($"Соседей: {neighbours.Count()}. Завершение работы");
-            } while (neighbours.Count() > 0);
-
-
-            //for (int i = 0; i < ColumnsCount; i++)
-            //{
-            //    mapCells.Add(new ObservableCollection<Cell>());
-            //    for (int j = 0; j < RowsCount; j++)
-            //    {
-            //        switch (0)
-            //        {
-            //            case 0:
-            //                mapCells[i].Add(new Space { x = j, y = i });
-            //                break;
-            //            case 1:
-            //                mapCells[i].Add(new Wall { y = i, x = j });
-            //                break;
-            //            case 5:
-            //                mapCells[i].Add(new Player { y = i, x = j });
-            //                break;
-            //            case 8:
-            //                mapCells[i].Add(new Point { y = i, x = j });
-            //                break;
-            //            case 9:
-            //                mapCells[i].Add(new Exit { y = i, x = j });
-            //                break;
-            //        }
-            //    }
-            //}
+                {
+                    Console.WriteLine($"Все клетки посещены. Завершение работы");
+                    break;
+                }
+            } while (true);
 
             //GeneratePlayerPosition(mas); // i =y ; j = x
-            for (int i = 0; i < ColumnsCount; i++)
+            for (int i = 0; i < columns; i++)
             {
                 mapCells.Add(new ObservableCollection<Cell>());
-                for (int j = 0; j < RowsCount; j++)
+                for (int j = 0; j < rows; j++)
                 {
                     if (mapArray[i, j] != null)
                         mapCells[i].Add(mapArray[i, j]);
