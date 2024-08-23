@@ -16,7 +16,7 @@ namespace ProjectMaze
         {
             get
             {
-                if (y % 2 != 0) // если нечетн
+                if (x % 2 != 0) // если нечетн
                     _cellWidth = 3;//3
                 return _cellWidth;
             }
@@ -32,7 +32,7 @@ namespace ProjectMaze
         {
             get
             {
-                if (x % 2 != 0)
+                if (y % 2 != 0)
                     _cellHeight = 3;//3
                 return _cellHeight;
             }

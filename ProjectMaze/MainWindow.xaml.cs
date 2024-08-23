@@ -61,7 +61,7 @@ namespace ProjectMaze
             if (colPlayer % 2 != 0)
                 colPlayer++;
 
-            player = new Player { y = rowPlayer, x = colPlayer };
+            player = new Player { y = colPlayer, x =  rowPlayer};
             mapArray[rowPlayer, colPlayer] = player;
             Console.WriteLine($"Позиция игрока: [{rowPlayer}][{colPlayer}]");
         }
@@ -199,15 +199,15 @@ namespace ProjectMaze
             GeneratePlayerPosition(mapArray);
 
             //
-            for (int i = 0; i < columns; i++)
+            for (int j = 0; j < rows; j++)
             {
                 mapCells.Add(new ObservableCollection<Cell>());
-                for (int j = 0; j < rows; j++)
+                for (int i = 0; i < columns; i++)
                 {
                     if (mapArray[i, j] != null)
-                        mapCells[i].Add(mapArray[i, j]);
+                        mapCells[j].Add(mapArray[i, j]);
                     else
-                        mapCells[i].Add(new Wall { x = i, y = j });
+                        mapCells[j].Add(new Wall { x = i, y = j });
                 }
             }
 
@@ -280,40 +280,36 @@ namespace ProjectMaze
                 default: return;
             }
 
-            int x = player.x, y= player.y; // позиция игрока
+            int X = player.x, Y = player.y;
 
-            int checkY = y + dy, checkX = x + dx;
+            int nextY = Y + dy * 2, nextX = X + dx * 2;
 
-            if (checkX < 0 || checkX > RowsCount - 1) 
-                return;
-            if (checkY < 0 || checkY > ColumnsCount - 1) 
-                return;
+            if (nextX < 0 || nextX > RowsCount - 1) return;
+            if (nextY < 0 || nextY > ColumnsCount - 1) return;
 
-            Cell targetWall = mapCells[checkX][checkY];
-            Cell target = mapCells[x + dx * 2][y + dy * 2];
+            Cell target = mapCells[nextY][nextX];
 
-            if (target is Point)
-                player.Score++;
-
+            //if (target is Point)
+            //    player.Score++;
             if (target is Exit)
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     Win();
                 }), null);
 
-            if (target.IsTransient && targetWall.IsTransient)
+            if (target.IsTransient)
             {
-                mapCells[x][y] = new Space() { x = x, y = y};
-                mapCells[target.x][target.y] = player;
-                player.y = target.x;
-                player.x = target.y;
+                mapCells[Y][X] = new Space() { y = Y, x = X };
+                player.y = nextY;
+                player.x = nextX;
+                mapCells[nextY][nextX] = player;
                 player.Step++;
                 Console.WriteLine($"Ход совершен.");
             }
             else
                 Console.WriteLine($"Ход невозможен.");
 
-            Console.WriteLine($"X = {x},Y = {y}");
+            Console.WriteLine($"X = {nextX},Y = {nextY}");
         }
     }
 }
