@@ -27,7 +27,10 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="{x:Type local:Cell}">
                                         <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" Background="{Binding Background}">
-                                            <Image Source="{Binding File}" Stretch="Fill"/>
+                                            <Grid>
+                                                <Image Source="{Binding File}" Stretch="Fill"/>
+                                                <TextBlock Text="{Binding TestText}" FontSize="8"/>
+                                            </Grid>
                                         </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

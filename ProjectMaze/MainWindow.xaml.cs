@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ProjectMaze
 {
@@ -48,22 +49,21 @@ namespace ProjectMaze
             InitializeComponent();
             this.DataContext = this;
         }
-        private void GeneratePlayerPosition(int[,] mas)
+        private void GeneratePlayerPosition(Cell[,] mapArray)
         {
             Random rnd = new Random();
             int rowPlayer, colPlayer;
 
+            rowPlayer = rnd.Next(1, ColumnsCount - 2);
+            if (rowPlayer % 2 != 0)
+                rowPlayer++;
+            colPlayer = rnd.Next(1, RowsCount - 2);
+            if (colPlayer % 2 != 0)
+                colPlayer++;
 
-            do //Размещение игрока
-            {
-                rowPlayer = rnd.Next(1, ColumnsCount - 1);
-                colPlayer = rnd.Next(1, RowsCount - 1);
-            } while (mas[rowPlayer, colPlayer] == 1 || mas[rowPlayer, colPlayer] == 5 || mas[rowPlayer, colPlayer] == 8); // Изменить проверку
-
-            mas[rowPlayer, colPlayer] = 5;
             player = new Player { y = rowPlayer, x = colPlayer };
-            Console.WriteLine($"player generated pos: {rowPlayer},{colPlayer}");
-
+            mapArray[rowPlayer, colPlayer] = player;
+            Console.WriteLine($"Позиция игрока: [{rowPlayer}][{colPlayer}]");
         }
 
         private List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
@@ -115,16 +115,26 @@ namespace ProjectMaze
             }
             return null;
         }
+        private void AddToTraces(Cell cell, List<Cell> traces)
+        {
+            traces.Add(cell);
+            if (traces.Count > RowsCount * ColumnsCount)
+                traces.RemoveAt(0);
+        }
+        private Cell MoveBack(List<Cell> traces)
+        {
+            Cell cell = traces.Last();
+            traces.RemoveAt(traces.Count() - 1);
+            return cell;
+        }
         private void MapGenerateButton(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine($"Generating..\n\n\n");
+            Console.WriteLine($"\n\n\nGenerating...");
             int rows = RowsCount, columns = ColumnsCount;
-
             Console.WriteLine($"rows = {rows}, columns = {columns}");
 
-            //int[,] mas = new int[ColumnsCount, RowsCount];
+            List<Cell> traces = new();
             Cell[,] mapArray = new Cell[ColumnsCount, RowsCount];
-
             mapCells = new ObservableCollection<ObservableCollection<Cell>>();
 
             Cell startCell = new Space
@@ -134,7 +144,6 @@ namespace ProjectMaze
                 IsVisited = true
             };
             mapArray[startCell.x, startCell.y] = startCell;
-            Cell lastCell = startCell;
             Cell currentCell = startCell;
             Random rnd = new Random();
             bool isRandomGenerated = false;
@@ -151,32 +160,32 @@ namespace ProjectMaze
                 {
                     neighbours = GetNeighbours(currentCell, columns, rows, mapArray);
                 }
-                Console.WriteLine($"Текущая ячейка: [{currentCell.x}][{currentCell.y}], соседей: {neighbours.Count()}");
 
                 if (neighbours.Count() != 0)
                 {
                     int rand = rnd.Next(neighbours.Count());
-
                     Cell neighbourCell = neighbours[rand];
-                    Console.WriteLine($"Выбрана ячейка для хода: [{neighbourCell.x}][{neighbourCell.y}]");
-
                     neighbourCell.IsVisited = true;
                     mapArray[neighbourCell.x, neighbourCell.y] = neighbourCell;
+                    Console.WriteLine($"Выбрана ячейка для хода: [{neighbourCell.x}][{neighbourCell.y}]");
 
                     Cell wall = GetWallBetweenCells(currentCell, neighbourCell);
                     mapArray[wall.x, wall.y] = wall;
-                    Console.WriteLine($"Удалена стена: [{wall.x}][{wall.y}]");
-                    lastCell = currentCell;
+
+                    AddToTraces(currentCell, traces);
                     currentCell = neighbourCell;
                 }
-                else if (neighbours.Count() == 0 && lastCell != currentCell)
+                else if (neighbours.Count() == 0 && traces.Count > 0 && currentCell != traces.First())
                 {
-                    currentCell = lastCell;
-                    Console.WriteLine($"Возврат на [{lastCell.x}][{lastCell.y}]");
+                    //if (GetRandomUnVisitedCell(mapArray) == null)
+                    //    break;
+                    currentCell = MoveBack(traces);
+                    Console.WriteLine($"Возврат на [{currentCell.x}][{currentCell.y}]");
                 }
                 else if (GetRandomUnVisitedCell(mapArray) != null)
                 {
                     currentCell = GetRandomUnVisitedCell(mapArray);
+                    Console.WriteLine($"Переход на точку: [{currentCell.x}][{currentCell.y}]");
                     isRandomGenerated = true;
                 }
                 else
@@ -186,7 +195,10 @@ namespace ProjectMaze
                 }
             } while (true);
 
-            //GeneratePlayerPosition(mas); // i =y ; j = x
+
+            GeneratePlayerPosition(mapArray);
+
+            //
             for (int i = 0; i < columns; i++)
             {
                 mapCells.Add(new ObservableCollection<Cell>());
@@ -268,36 +280,40 @@ namespace ProjectMaze
                 default: return;
             }
 
-            int X = player.x, Y = player.y;
+            int x = player.x, y= player.y; // позиция игрока
 
-            int nextY = Y + dy, nextX = X + dx;
+            int checkY = y + dy, checkX = x + dx;
 
-            if (nextX < 0 || nextX > RowsCount - 1) return;
-            if (nextY < 0 || nextY > ColumnsCount - 1) return;
+            if (checkX < 0 || checkX > RowsCount - 1) 
+                return;
+            if (checkY < 0 || checkY > ColumnsCount - 1) 
+                return;
 
-            Cell target = mapCells[nextY][nextX];
+            Cell targetWall = mapCells[checkX][checkY];
+            Cell target = mapCells[x + dx * 2][y + dy * 2];
 
-            //if (target is Point)
-            //    player.Score++;
+            if (target is Point)
+                player.Score++;
+
             if (target is Exit)
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     Win();
                 }), null);
 
-            if (target.IsTransient)
+            if (target.IsTransient && targetWall.IsTransient)
             {
-                mapCells[Y][X] = new Space() { y = Y, x = X };
-                mapCells[nextY][nextX] = player;
-                player.y = nextY;
-                player.x = nextX;
+                mapCells[x][y] = new Space() { x = x, y = y};
+                mapCells[target.x][target.y] = player;
+                player.y = target.x;
+                player.x = target.y;
                 player.Step++;
                 Console.WriteLine($"Ход совершен.");
             }
             else
                 Console.WriteLine($"Ход невозможен.");
 
-            Console.WriteLine($"X = {nextX},Y = {nextY}");
+            Console.WriteLine($"X = {x},Y = {y}");
         }
     }
 }
