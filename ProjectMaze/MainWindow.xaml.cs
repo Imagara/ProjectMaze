@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using static System.Net.Mime.MediaTypeNames;
@@ -12,8 +13,20 @@ namespace ProjectMaze
     public partial class MainWindow : Window
     {
         ObservableCollection<ObservableCollection<Cell>> mapCells;
-
         public event PropertyChangedEventHandler PropertyChanged;
+        private bool _generateWindowVisibility = true;
+        public bool GenerateWindowVisibility
+        {
+            get
+            {
+                return _generateWindowVisibility;
+            }
+            set
+            {
+                _generateWindowVisibility = value;
+                OnPropertyChanged("GenerateWindowVisibility");
+            }
+        }
         Player player { get; set; }
 
         int _rowsCount = 30;
@@ -49,6 +62,10 @@ namespace ProjectMaze
             InitializeComponent();
             this.DataContext = this;
         }
+        protected void OnPropertyChanged([CallerMemberName] string prop = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
         private void GeneratePlayerPosition(Cell[,] mapArray)
         {
             Random rnd = new Random();
@@ -61,9 +78,9 @@ namespace ProjectMaze
             if (colPlayer % 2 != 0)
                 colPlayer++;
 
-            player = new Player { y = colPlayer, x =  rowPlayer};
-            mapArray[rowPlayer, colPlayer] = player;
-            Console.WriteLine($"Позиция игрока: [{rowPlayer}][{colPlayer}]");
+            player = new Player { x = colPlayer, y = rowPlayer };
+            mapArray[colPlayer, rowPlayer] = player;
+            Console.WriteLine($"Позиция игрока: [{colPlayer}][{rowPlayer}]"); ///1
         }
 
         private List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
@@ -197,8 +214,9 @@ namespace ProjectMaze
 
 
             GeneratePlayerPosition(mapArray);
+            GeneratePointsPosition(mapArray);
+            GenerateExitPosition(mapArray);
 
-            //
             for (int j = 0; j < rows; j++)
             {
                 mapCells.Add(new ObservableCollection<Cell>());
@@ -213,6 +231,40 @@ namespace ProjectMaze
 
             Map.ItemsSource = mapCells;
             GenerateWindow.Visibility = Visibility.Collapsed;
+            //GenerateWindowVisibility = false;
+        }
+
+        private void GeneratePointsPosition(Cell[,] mapArray)
+        {
+            Random rnd = new();
+            int x = 0, y = 0;
+            int count = 3;
+            for (int i = 0; i < count; i++)
+            {
+                x = rnd.Next(1, ColumnsCount - 2);
+                if (x % 2 != 0)
+                    x++;
+                y = rnd.Next(1, RowsCount - 2);
+                if (y % 2 != 0)
+                    y++;
+                Point point = new Point { x = x, y = y };
+                mapArray[x, y] = point;
+                Console.WriteLine($"Point was created on [{x}][{y}]");
+            }
+        }
+        private void GenerateExitPosition(Cell[,] mapArray)
+        {
+            Random rnd = new();
+            int x = 0, y = 0;
+            x = rnd.Next(1, ColumnsCount - 2);
+            if (x % 2 != 0)
+                x++;
+            y = rnd.Next(1, RowsCount - 2);
+            if (y % 2 != 0)
+                y++;
+            Exit exit = new Exit { x = x, y = y };
+            mapArray[x, y] = exit;
+            Console.WriteLine($"Exit was created on [{x}][{y}]");
         }
 
         private void CheckOnlyDigitsKeyDown(object sender, KeyEventArgs e)
@@ -282,27 +334,28 @@ namespace ProjectMaze
 
             int X = player.x, Y = player.y;
 
-            int nextY = Y + dy * 2, nextX = X + dx * 2;
+            int nextY = Y + dy, nextX = X + dx;
 
-            if (nextX < 0 || nextX > RowsCount - 1) return;
-            if (nextY < 0 || nextY > ColumnsCount - 1) return;
+            if (nextX < 0 || nextX > ColumnsCount - 1) return;
+            if (nextY < 0 || nextY > RowsCount - 1) return;
 
-            Cell target = mapCells[nextY][nextX];
+            Cell target = mapCells[Y + dy * 2][X + dx * 2];
+            Cell targetWall = mapCells[nextY][nextX];
 
-            //if (target is Point)
-            //    player.Score++;
+            if (target is Point)
+                player.Score++;
             if (target is Exit)
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     Win();
                 }), null);
 
-            if (target.IsTransient)
+            if (target.IsTransient && targetWall.IsTransient)
             {
                 mapCells[Y][X] = new Space() { y = Y, x = X };
-                player.y = nextY;
-                player.x = nextX;
-                mapCells[nextY][nextX] = player;
+                player.y = target.y;
+                player.x = target.x;
+                mapCells[target.y][target.x] = player;
                 player.Step++;
                 Console.WriteLine($"Ход совершен.");
             }

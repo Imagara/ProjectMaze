@@ -10,38 +10,42 @@
         Title="MainWindow" 
         Height="450" Width="800">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="120"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1">
+            <Label Content="{Binding Score}" FontSize="20"/>
+        </Grid>
         <Viewbox>
-            <Border>
-                <ItemsControl Name="Map">
-                    <ItemsControl.Background>
-                        <ImageBrush ImageSource="src/background.png"/>
-                    </ItemsControl.Background>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ItemsControl ItemsSource="{Binding}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type local:Cell}">
-                                        <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" Background="{Binding Background}">
-                                            <Grid>
-                                                <Image Source="{Binding File}" Stretch="Fill"/>
-                                                <TextBlock Text="{Binding TestText}" FontSize="8"/>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+            <Border BorderBrush="Black" BorderThickness="1" Visibility="{Binding GenerateWindowVisibility}">
+            <ItemsControl Name="Map" Margin="1">
+                <ItemsControl.Background>
+                    <ImageBrush ImageSource="src/background.png"/>
+                </ItemsControl.Background>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ItemsControl ItemsSource="{Binding}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type local:Cell}">
+                                    <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" Background="{Binding Background}">
+                                        <Image Source="{Binding File}" Stretch="Fill"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             </Border>
         </Viewbox>
 
-        <Grid Name="GenerateWindow">
+        <Grid Name="GenerateWindow" Grid.ColumnSpan="2" Visibility="{Binding GenerateWindowVisibility}">
             <ListBox VerticalAlignment="Center"
                      HorizontalAlignment="Center">
                 <Label Height="25" Width="120"
@@ -64,4 +68,5 @@
             </ListBox>
         </Grid>
     </Grid>
+
 </Window>
