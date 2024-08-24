@@ -82,25 +82,25 @@ namespace ProjectMaze
                 OnPropertyChanged();
             }
         }
-        private int _step;
-        public int Step
+        private int _steps;
+        public int Steps
         {
-            get => _step;
+            get => _steps;
             set
             {
-                _step = value;
+                _steps = value;
                 OnPropertyChanged();
             }
         }
 
-        int score = 1;
-        public int Score
+        int _points = 0;
+        public int Points
         {
-            get => score;
+            get => _points;
             set
             {
-                score = value;
-                OnPropertyChanged("Score");
+                _points = value;
+                OnPropertyChanged();
             }
         }
     }
@@ -124,7 +124,7 @@ namespace ProjectMaze
     {
         public override bool IsTransient => true;
 
-        string _file = "key.png";
+        string _file = "seed.png";
         public override string File
         {
             get => GetImageUri(_file);
@@ -150,7 +150,7 @@ namespace ProjectMaze
     {
         public override bool IsTransient => true;
 
-        string _file = "star.png";
+        string _file = "exit.png";
         new public string File
         {
             get => GetImageUri(_file);

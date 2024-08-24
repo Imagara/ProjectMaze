@@ -101,7 +101,6 @@
   <ItemGroup>
     <Resource Include="src\key.png" />
     <Resource Include="src\player.png" />
-    <Resource Include="src\star.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="src\background.png" />
@@ -111,6 +110,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="src\empty.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="src\exit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="src\seed.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

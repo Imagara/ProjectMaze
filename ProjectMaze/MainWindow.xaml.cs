@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ProjectMaze
 {
@@ -14,6 +13,19 @@ namespace ProjectMaze
     {
         ObservableCollection<ObservableCollection<Cell>> mapCells;
         public event PropertyChangedEventHandler PropertyChanged;
+        string _difficulty;
+        public string Difficulty
+        {
+            get
+            {
+                return _difficulty;
+            }
+            set
+            {
+                _difficulty = value;
+                OnPropertyChanged();
+            }
+        }
         private bool _generateWindowVisibility = true;
         public bool GenerateWindowVisibility
         {
@@ -66,23 +78,26 @@ namespace ProjectMaze
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
-        private void GeneratePlayerPosition(Cell[,] mapArray)
+        private Cell GenerateRandomEmptyPosition(Cell[,] mapArray)
         {
             Random rnd = new Random();
-            int rowPlayer, colPlayer;
+            int x = 0, y = 0;
 
-            rowPlayer = rnd.Next(1, ColumnsCount - 2);
-            if (rowPlayer % 2 != 0)
-                rowPlayer++;
-            colPlayer = rnd.Next(1, RowsCount - 2);
-            if (colPlayer % 2 != 0)
-                colPlayer++;
+            do
+            {
+                x = rnd.Next(0, ColumnsCount - 1);
+                if (x % 2 != 0)
+                    x++;
 
-            player = new Player { x = colPlayer, y = rowPlayer };
-            mapArray[colPlayer, rowPlayer] = player;
-            Console.WriteLine($"Позиция игрока: [{colPlayer}][{rowPlayer}]"); ///1
+                y = rnd.Next(0, RowsCount - 1);
+                if (y % 2 != 0)
+                    y++;
+
+            } while (mapArray[x, y] is not Space);
+
+            Cell emptyCell = new Space { x = x, y = y };
+            return emptyCell;
         }
-
         private List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
         {
             int walkDist = 2;
@@ -207,15 +222,34 @@ namespace ProjectMaze
                 }
                 else
                 {
-                    Console.WriteLine($"Все клетки посещены. Завершение работы");
+                    Console.WriteLine($"Все клетки посещены. Лабиринт сгенерирован");
                     break;
                 }
             } while (true);
 
 
-            GeneratePlayerPosition(mapArray);
-            GeneratePointsPosition(mapArray);
-            GenerateExitPosition(mapArray);
+            Cell playerRandomCell = GenerateRandomEmptyPosition(mapArray);
+            player = new Player { x = playerRandomCell.x, y = playerRandomCell.y };
+            mapArray[playerRandomCell.x, playerRandomCell.y] = player;
+            Console.WriteLine($"Позиция игрока: [{playerRandomCell.x}][{playerRandomCell.y}]");
+            rightBorder.DataContext = player;
+
+            Cell exitRandomCell = GenerateRandomEmptyPosition(mapArray);
+            Exit exit = new Exit { x = exitRandomCell.x, y = exitRandomCell.y };
+            mapArray[exitRandomCell.x, exitRandomCell.y] = exit;
+            Console.WriteLine($"Exit was created on [{exitRandomCell.x}][{exitRandomCell.y}]");
+
+            for (int i = 0; i < 7; i++)
+            {
+                Cell randomCell = GenerateRandomEmptyPosition(mapArray);
+                if (randomCell == null)
+                    break;
+                Point point = new Point { x = randomCell.x, y = randomCell.y };
+                mapArray[randomCell.x, randomCell.y] = point;
+                Console.WriteLine($"Point was created on [{randomCell.x}][{randomCell.y}]");
+            }
+
+
 
             for (int j = 0; j < rows; j++)
             {
@@ -233,40 +267,6 @@ namespace ProjectMaze
             GenerateWindow.Visibility = Visibility.Collapsed;
             //GenerateWindowVisibility = false;
         }
-
-        private void GeneratePointsPosition(Cell[,] mapArray)
-        {
-            Random rnd = new();
-            int x = 0, y = 0;
-            int count = 3;
-            for (int i = 0; i < count; i++)
-            {
-                x = rnd.Next(1, ColumnsCount - 2);
-                if (x % 2 != 0)
-                    x++;
-                y = rnd.Next(1, RowsCount - 2);
-                if (y % 2 != 0)
-                    y++;
-                Point point = new Point { x = x, y = y };
-                mapArray[x, y] = point;
-                Console.WriteLine($"Point was created on [{x}][{y}]");
-            }
-        }
-        private void GenerateExitPosition(Cell[,] mapArray)
-        {
-            Random rnd = new();
-            int x = 0, y = 0;
-            x = rnd.Next(1, ColumnsCount - 2);
-            if (x % 2 != 0)
-                x++;
-            y = rnd.Next(1, RowsCount - 2);
-            if (y % 2 != 0)
-                y++;
-            Exit exit = new Exit { x = x, y = y };
-            mapArray[x, y] = exit;
-            Console.WriteLine($"Exit was created on [{x}][{y}]");
-        }
-
         private void CheckOnlyDigitsKeyDown(object sender, KeyEventArgs e)
         {
             try
@@ -336,14 +336,19 @@ namespace ProjectMaze
 
             int nextY = Y + dy, nextX = X + dx;
 
-            if (nextX < 0 || nextX > ColumnsCount - 1) return;
-            if (nextY < 0 || nextY > RowsCount - 1) return;
+            if (nextX < 0 || nextX > ColumnsCount - 1) 
+                return;
+            if (nextY < 0 || nextY > RowsCount - 1) 
+                return;
+
+            if (mapCells[Y + dy * 2][X + dx * 2] == null)
+                return;
 
             Cell target = mapCells[Y + dy * 2][X + dx * 2];
             Cell targetWall = mapCells[nextY][nextX];
 
             if (target is Point)
-                player.Score++;
+                player.Points++;
             if (target is Exit)
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
@@ -356,7 +361,7 @@ namespace ProjectMaze
                 player.y = target.y;
                 player.x = target.x;
                 mapCells[target.y][target.x] = player;
-                player.Step++;
+                player.Steps++;
                 Console.WriteLine($"Ход совершен.");
             }
             else
