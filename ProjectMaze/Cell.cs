@@ -15,8 +15,8 @@ namespace ProjectMaze
         {
             get
             {
-                if (x % 2 != 0) // если нечетн
-                    _cellWidth = 3;//3
+                if (x % 2 != 0) 
+                    _cellWidth = 3;
                 return _cellWidth;
             }
             set
@@ -32,7 +32,7 @@ namespace ProjectMaze
             get
             {
                 if (y % 2 != 0)
-                    _cellHeight = 3;//3
+                    _cellHeight = 3;
                 return _cellHeight;
             }
             set
@@ -107,8 +107,15 @@ namespace ProjectMaze
     class Wall : Cell
     {
         string _file = "wall.png";
-        public override string File { get => GetImageUri(_file); set { _file = value; OnPropertyChanged("File"); } }
-
+        public override string File 
+        { 
+            get => GetImageUri(_file); 
+            set 
+            { 
+                _file = value; 
+                OnPropertyChanged("File"); 
+            }
+        }
         Brush background = Brushes.Black;
         public override Brush Background 
         {

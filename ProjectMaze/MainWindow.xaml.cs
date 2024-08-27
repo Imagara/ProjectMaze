@@ -13,57 +13,31 @@ namespace ProjectMaze
     {
         ObservableCollection<ObservableCollection<Cell>> mapCells;
         public event PropertyChangedEventHandler PropertyChanged;
-        string _difficulty;
-        public string Difficulty
-        {
-            get
-            {
-                return _difficulty;
-            }
-            set
-            {
-                _difficulty = value;
-                OnPropertyChanged();
-            }
-        }
-        private bool _generateWindowVisibility = true;
-        public bool GenerateWindowVisibility
-        {
-            get
-            {
-                return _generateWindowVisibility;
-            }
-            set
-            {
-                _generateWindowVisibility = value;
-                OnPropertyChanged("GenerateWindowVisibility");
-            }
-        }
         Player player { get; set; }
 
-        int _rowsCount = 30;
+        int _rowsCount = 60;
         public int RowsCount
         {
-            get => _rowsCount;
+            get => _rowsCount/2;
             set
             {
                 if (value > 100)
-                    _rowsCount = 100;
+                    _rowsCount = 200;
                 else
-                    _rowsCount = value;
+                    _rowsCount = value * 2;
             }
         }
 
-        int _columnsCount = 30;
+        int _columnsCount = 60;
         public int ColumnsCount
         {
-            get => _columnsCount;
+            get => _columnsCount/2;
             set
             {
                 if (value > 100)
-                    _columnsCount = 100;
+                    _columnsCount = 200;
                 else
-                    _columnsCount = value;
+                    _columnsCount = value*2;
             }
         }
 
@@ -150,7 +124,7 @@ namespace ProjectMaze
         private void AddToTraces(Cell cell, List<Cell> traces)
         {
             traces.Add(cell);
-            if (traces.Count > RowsCount * ColumnsCount)
+            if (traces.Count > RowsCount / 2 * ColumnsCount / 2)
                 traces.RemoveAt(0);
         }
         private Cell MoveBack(List<Cell> traces)
@@ -336,9 +310,9 @@ namespace ProjectMaze
 
             int nextY = Y + dy, nextX = X + dx;
 
-            if (nextX < 0 || nextX > ColumnsCount - 1) 
+            if (nextX < 0 || nextX > ColumnsCount - 1)
                 return;
-            if (nextY < 0 || nextY > RowsCount - 1) 
+            if (nextY < 0 || nextY > RowsCount - 1)
                 return;
 
             if (mapCells[Y + dy * 2][X + dx * 2] == null)

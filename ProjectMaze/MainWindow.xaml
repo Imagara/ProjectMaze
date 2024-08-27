@@ -64,13 +64,15 @@
                      HorizontalAlignment="Center">
                 <Label Height="25" Width="120"
                        Content="Ширина:"/>
-                <TextBox Height="30" Width="120"
+                <TextBox Name="MazeWidthTextBox"
+                         Height="30" Width="120"
                          VerticalContentAlignment="Center"
                          KeyDown="CheckOnlyDigitsKeyDown"
                          Text="{Binding ColumnsCount, Mode=TwoWay}"/>
                 <Label Height="25" Width="120"
                        Content="Высота:"/>
-                <TextBox Height="30" Width="120"
+                <TextBox Name="MazeHeightTextBox"
+                         Height="30" Width="120"
                          VerticalContentAlignment="Center"
                          KeyDown="CheckOnlyDigitsKeyDown"
                          Text="{Binding RowsCount, Mode=TwoWay}"/>
