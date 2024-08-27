@@ -15,42 +15,51 @@ namespace ProjectMaze
         public event PropertyChangedEventHandler PropertyChanged;
         Player player { get; set; }
 
-        int _rowsCount = 60;
-        public int RowsCount
+        int _difficultySelectedIndex = 0;
+        public int DifficultySelectedIndex
         {
-            get => _rowsCount/2;
+            get => _difficultySelectedIndex;
             set
             {
-                if (value > 100)
-                    _rowsCount = 200;
-                else
-                    _rowsCount = value * 2;
+                _difficultySelectedIndex = value;
             }
         }
 
-        int _columnsCount = 60;
-        public int ColumnsCount
+        int _rowsCount = 15;
+        public int RowsCount
         {
-            get => _columnsCount/2;
+            get => (_rowsCount / 2) + 1;
             set
             {
                 if (value > 100)
-                    _columnsCount = 200;
+                    _rowsCount = 199;
+                else if (value < 3)
+                    _rowsCount = 5;
                 else
-                    _columnsCount = value*2;
+                    _rowsCount = (value * 2) - 1;
+            }
+        }
+
+        int _columnsCount = 15;
+        public int ColumnsCount
+        {
+            get => (_columnsCount / 2) + 1;
+            set
+            {
+                if (value > 100)
+                    _columnsCount = 199;
+                else if (value < 3)
+                    _columnsCount = 5;
+                else
+                    _columnsCount = (value * 2) - 1;
             }
         }
 
         Key currentKey = Key.None;
-
         public MainWindow()
         {
             InitializeComponent();
             this.DataContext = this;
-        }
-        protected void OnPropertyChanged([CallerMemberName] string prop = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
         private Cell GenerateRandomEmptyPosition(Cell[,] mapArray)
         {
@@ -59,11 +68,11 @@ namespace ProjectMaze
 
             do
             {
-                x = rnd.Next(0, ColumnsCount - 1);
+                x = rnd.Next(0, _columnsCount - 1);
                 if (x % 2 != 0)
                     x++;
 
-                y = rnd.Next(0, RowsCount - 1);
+                y = rnd.Next(0, _rowsCount - 1);
                 if (y % 2 != 0)
                     y++;
 
@@ -111,9 +120,9 @@ namespace ProjectMaze
         }
         private Cell GetRandomUnVisitedCell(Cell[,] mapArray)
         {
-            for (int i = 0; i < ColumnsCount; i += 2)
+            for (int i = 0; i < _columnsCount; i += 2)
             {
-                for (int j = 0; j < RowsCount; j += 2)
+                for (int j = 0; j < _rowsCount; j += 2)
                 {
                     if (mapArray[i, j] == null)
                         return new Space { x = i, y = j };
@@ -124,7 +133,7 @@ namespace ProjectMaze
         private void AddToTraces(Cell cell, List<Cell> traces)
         {
             traces.Add(cell);
-            if (traces.Count > RowsCount / 2 * ColumnsCount / 2)
+            if (traces.Count > _rowsCount / 2 * _columnsCount / 2)
                 traces.RemoveAt(0);
         }
         private Cell MoveBack(List<Cell> traces)
@@ -135,12 +144,12 @@ namespace ProjectMaze
         }
         private void MapGenerateButton(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine($"\n\n\nGenerating...");
-            int rows = RowsCount, columns = ColumnsCount;
-            Console.WriteLine($"rows = {rows}, columns = {columns}");
+            Console.WriteLine($"\n\n\nГенерация...");
+            int rows = _rowsCount, columns = _columnsCount;
+            Console.WriteLine($"Размер лабиринта = {RowsCount}x{ColumnsCount}");
 
             List<Cell> traces = new();
-            Cell[,] mapArray = new Cell[ColumnsCount, RowsCount];
+            Cell[,] mapArray = new Cell[columns, rows];
             mapCells = new ObservableCollection<ObservableCollection<Cell>>();
 
             Cell startCell = new Space
@@ -183,8 +192,8 @@ namespace ProjectMaze
                 }
                 else if (neighbours.Count() == 0 && traces.Count > 0 && currentCell != traces.First())
                 {
-                    //if (GetRandomUnVisitedCell(mapArray) == null)
-                    //    break;
+                    if (traces.Count % 10 == 0 && GetRandomUnVisitedCell(mapArray) == null)
+                        break;
                     currentCell = MoveBack(traces);
                     Console.WriteLine($"Возврат на [{currentCell.x}][{currentCell.y}]");
                 }
@@ -213,7 +222,9 @@ namespace ProjectMaze
             mapArray[exitRandomCell.x, exitRandomCell.y] = exit;
             Console.WriteLine($"Exit was created on [{exitRandomCell.x}][{exitRandomCell.y}]");
 
-            for (int i = 0; i < 7; i++)
+            int pointsCount = 1 + DifficultySelectedIndex * 2;
+
+            for (int i = 0; i < pointsCount; i++)
             {
                 Cell randomCell = GenerateRandomEmptyPosition(mapArray);
                 if (randomCell == null)
@@ -310,9 +321,9 @@ namespace ProjectMaze
 
             int nextY = Y + dy, nextX = X + dx;
 
-            if (nextX < 0 || nextX > ColumnsCount - 1)
+            if (nextX < 0 || nextX > _columnsCount - 1)
                 return;
-            if (nextY < 0 || nextY > RowsCount - 1)
+            if (nextY < 0 || nextY > _rowsCount - 1)
                 return;
 
             if (mapCells[Y + dy * 2][X + dx * 2] == null)

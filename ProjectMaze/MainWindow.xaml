@@ -80,7 +80,7 @@
                           Text="0"
                           VerticalContentAlignment="Center"
                           SelectedItem="0"
-                          SelectedIndex="0">
+                          SelectedIndex="{Binding DifficultySelectedIndex}">
                     <ComboBoxItem>Легко</ComboBoxItem>
                     <ComboBoxItem>Средне</ComboBoxItem>
                     <ComboBoxItem>Сложно</ComboBoxItem>

@@ -117,5 +117,8 @@
   <ItemGroup>
     <Resource Include="src\seed.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="src\player_exit.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

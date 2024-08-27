@@ -179,4 +179,17 @@ namespace ProjectMaze
             }
         }
     }
+    class ExitPlayer : Exit
+    {
+        string _file = "player_exit.png";
+        new public string File
+        {
+            get => GetImageUri(_file);
+            set
+            {
+                _file = value;
+                OnPropertyChanged("File");
+            }
+        }
+    }
 }
