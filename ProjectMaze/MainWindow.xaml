@@ -14,7 +14,7 @@
             <ColumnDefinition />
             <ColumnDefinition Width="120"/>
         </Grid.ColumnDefinitions>
-        <Border x:Name="rightBorder" Grid.Column="1" Background="White">
+        <Border Name="RightBorder" Grid.Column="1" Background="White">
             <Grid Grid.IsSharedSizeScope="True">
                 <StackPanel>
                     <TextBlock Text="{Binding Points, StringFormat='Очки:  {0}'}" 
@@ -26,42 +26,62 @@
         </Border>
 
         <Viewbox>
-            <Border BorderBrush="Black" 
-                    BorderThickness="1" 
-                    Visibility="{Binding GenerateWindowVisibility}">
-            <ItemsControl Name="Map"
+            <Border Name="MapBorder"
+                    BorderBrush="Black" 
+                    BorderThickness="1.5"
+                    Visibility="Collapsed">
+                <ItemsControl Name="Map"
                           Margin="1">
-                <ItemsControl.Background>
-                    <ImageBrush ImageSource="src/background.png"/>
-                </ItemsControl.Background>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ItemsControl ItemsSource="{Binding}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type local:Cell}">
-                                    <Border Width="{Binding CellWidth}" 
+                    <ItemsControl.Background>
+                        <ImageBrush ImageSource="src/background.png"/>
+                    </ItemsControl.Background>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type local:Cell}">
+                                        <Border Width="{Binding CellWidth}" 
                                             Height="{Binding CellHeight}" 
                                             Background="{Binding Background}">
-                                        <Image Source="{Binding File}" 
+                                            <Image Source="{Binding File}" 
                                                Stretch="Fill"/>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </Border>
         </Viewbox>
 
-        <Grid Name="GenerateWindow" Grid.ColumnSpan="2" Visibility="{Binding GenerateWindowVisibility}">
+        <Grid Name="GenerateWindow" 
+              Grid.ColumnSpan="2">
             <ListBox VerticalAlignment="Center"
                      HorizontalAlignment="Center">
+                <StackPanel Name="ResultGrid"
+                            Visibility="Collapsed"
+                            Width="120">
+                    <TextBlock TextWrapping="Wrap"
+                               VerticalAlignment="Center">
+                        <Run FontSize="26">Победа!</Run>
+                        <LineBreak/>
+                        <Run FontSize="14">Сделано ходов:</Run>
+                        <Run Name="ResultStepsCount"/>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap"
+                               VerticalAlignment="Center">
+                        <Run FontSize="14">Собрано семян:</Run>
+                        <Run Name="ResultPointsCount"/>
+                    </TextBlock>
+                    
+                </StackPanel>
+
                 <Label Height="25" Width="120"
                        Content="Ширина:"/>
                 <TextBox Name="MazeWidthTextBox"

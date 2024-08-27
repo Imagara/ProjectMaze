@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace ProjectMaze
 {
@@ -14,7 +15,7 @@ namespace ProjectMaze
         ObservableCollection<ObservableCollection<Cell>> mapCells;
         public event PropertyChangedEventHandler PropertyChanged;
         Player player { get; set; }
-
+        DispatcherTimer pressedKeyTimer { get; set; }
         int _difficultySelectedIndex = 0;
         public int DifficultySelectedIndex
         {
@@ -56,6 +57,7 @@ namespace ProjectMaze
         }
 
         Key currentKey = Key.None;
+        private int GetAllPointsCount => Convert.ToInt32(1 + ((DifficultySelectedIndex+1) * 0.75 * ((ColumnsCount + RowsCount) / 5)));
         public MainWindow()
         {
             InitializeComponent();
@@ -210,30 +212,33 @@ namespace ProjectMaze
                 }
             } while (true);
 
-
+            #region Размещение игрока
             Cell playerRandomCell = GenerateRandomEmptyPosition(mapArray);
             player = new Player { x = playerRandomCell.x, y = playerRandomCell.y };
             mapArray[playerRandomCell.x, playerRandomCell.y] = player;
             Console.WriteLine($"Позиция игрока: [{playerRandomCell.x}][{playerRandomCell.y}]");
-            rightBorder.DataContext = player;
+            RightBorder.DataContext = player;
+            #endregion
 
+            #region Создание выхода
             Cell exitRandomCell = GenerateRandomEmptyPosition(mapArray);
             Exit exit = new Exit { x = exitRandomCell.x, y = exitRandomCell.y };
             mapArray[exitRandomCell.x, exitRandomCell.y] = exit;
-            Console.WriteLine($"Exit was created on [{exitRandomCell.x}][{exitRandomCell.y}]");
+            Console.WriteLine($"Выход был создан [{exitRandomCell.x}][{exitRandomCell.y}]");
+            #endregion
 
-            int pointsCount = 1 + DifficultySelectedIndex * 2;
-
-            for (int i = 0; i < pointsCount; i++)
+            #region Создание Points
+            for (int i = 0; i < GetAllPointsCount; i++)
             {
                 Cell randomCell = GenerateRandomEmptyPosition(mapArray);
                 if (randomCell == null)
                     break;
                 Point point = new Point { x = randomCell.x, y = randomCell.y };
                 mapArray[randomCell.x, randomCell.y] = point;
-                Console.WriteLine($"Point was created on [{randomCell.x}][{randomCell.y}]");
+                Console.WriteLine($"Семечко было создано [{randomCell.x}][{randomCell.y}]");
             }
-
+            #endregion
+            Console.WriteLine($"Всего семян было создано: {GetAllPointsCount}");
 
 
             for (int j = 0; j < rows; j++)
@@ -250,7 +255,8 @@ namespace ProjectMaze
 
             Map.ItemsSource = mapCells;
             GenerateWindow.Visibility = Visibility.Collapsed;
-            //GenerateWindowVisibility = false;
+            RightBorder.Visibility = Visibility.Visible;
+            MapBorder.Visibility = Visibility.Visible;
         }
         private void CheckOnlyDigitsKeyDown(object sender, KeyEventArgs e)
         {
@@ -270,15 +276,19 @@ namespace ProjectMaze
         }
         private void Win()
         {
-
+            ResultStepsCount.Text = player.Steps.ToString();
+            ResultPointsCount.Text = player.Points.ToString();
+            ResultGrid.Visibility = Visibility.Visible;
+            RightBorder.Visibility = Visibility.Collapsed;
+            MapBorder.Visibility = Visibility.Collapsed;
+            GenerateWindow.Visibility = Visibility.Visible;
+            Keyboard.ClearFocus();
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.IsRepeat || e.Key == Key.None)
+            if (e.IsRepeat || e.Key == Key.None || player == null)
                 return;
-
-            currentKey = e.Key;
 
             switch (e.Key)
             {
@@ -286,29 +296,33 @@ namespace ProjectMaze
                 case Key.Right:
                 case Key.Down:
                 case Key.Left:
-                    Console.WriteLine($"pressed {currentKey}");
-                    Move(currentKey);
+                    pressedKeyTimer?.Stop();
+                    currentKey = e.Key;
+                    Move(null, null);
+                    pressedKeyTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(250), DispatcherPriority.Background, Move, Dispatcher);
                     break;
                 case Key.Escape:
-                    //if (MessageBox.Show("Начать заново?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                    //{
-                    //    GenerateWindow.Visibility = Visibility.Visible;
-                    //    Keyboard.ClearFocus();
-                    //}
-                    MapGenerateButton(null, null);
+                    if (MessageBox.Show("Начать заново?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        MapBorder.Visibility = Visibility.Collapsed;
+                        ResultGrid.Visibility = Visibility.Collapsed;
+                        RightBorder.Visibility = Visibility.Collapsed;
+                        GenerateWindow.Visibility = Visibility.Visible;
+                        Keyboard.ClearFocus();
+                    }
                     break;
             }
-
         }
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
             currentKey = Key.None;
+            pressedKeyTimer?.Stop();
         }
-        private void Move(Key pressed)
+        private void Move(object sender, EventArgs e)
         {
             int dx = 0, dy = 0;
-            switch (pressed)
+            switch (currentKey)
             {
                 case Key.Up: dy = -1; break;
                 case Key.Right: dx = 1; break;
@@ -318,6 +332,7 @@ namespace ProjectMaze
             }
 
             int X = player.x, Y = player.y;
+            Cell recentPlayerPos = mapCells[Y][X];
 
             int nextY = Y + dy, nextX = X + dx;
 
@@ -332,27 +347,47 @@ namespace ProjectMaze
             Cell target = mapCells[Y + dy * 2][X + dx * 2];
             Cell targetWall = mapCells[nextY][nextX];
 
-            if (target is Point)
-                player.Points++;
-            if (target is Exit)
-                Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    Win();
-                }), null);
+
 
             if (target.IsTransient && targetWall.IsTransient)
             {
-                mapCells[Y][X] = new Space() { y = Y, x = X };
+                if (recentPlayerPos is not ExitPlayer && recentPlayerPos is not Exit)
+                    mapCells[Y][X] = new Space() { y = Y, x = X };
+                else
+                    mapCells[Y][X] = new Exit() { y = Y, x = X };
+
                 player.y = target.y;
                 player.x = target.x;
-                mapCells[target.y][target.x] = player;
+
+                if (target is not Exit)
+                    mapCells[target.y][target.x] = player;
+                else
+                    mapCells[target.y][target.x] = new ExitPlayer { x = target.x, y = target.y };
                 player.Steps++;
                 Console.WriteLine($"Ход совершен.");
             }
             else
+            {
                 Console.WriteLine($"Ход невозможен.");
+                return;
+            }
 
-            Console.WriteLine($"X = {nextX},Y = {nextY}");
+            if (target is Point)
+            {
+                player.Points++;
+                target = null;
+            }
+
+            if (target is Exit && GetAllPointsCount <= player.Points)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    pressedKeyTimer?.Stop();
+                    Win();
+                }), null);
+
+            }
+            Console.WriteLine($"Позиция игрока: [{nextX}][{nextY}]");
         }
     }
 }
