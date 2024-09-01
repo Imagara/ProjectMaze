@@ -14,7 +14,8 @@
             <ColumnDefinition />
             <ColumnDefinition Width="120"/>
         </Grid.ColumnDefinitions>
-        <Menu Height="25" VerticalAlignment="Top" Grid.ColumnSpan="2">
+        <Menu Height="25" VerticalAlignment="Top" Grid.ColumnSpan="2"
+              Background="Transparent">
             <MenuItem Header="О программе">
                 <MenuItem Header="Справка" Click="MenuItem_Click"></MenuItem>
                 <MenuItem Header="О разработчике" Click="MenuItem_Click"></MenuItem>
@@ -40,9 +41,6 @@
                     Visibility="Collapsed">
                 <ItemsControl Name="Map"
                           Margin="1">
-                    <ItemsControl.Background>
-                        <ImageBrush ImageSource="src/background.png"/>
-                    </ItemsControl.Background>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <ItemsControl ItemsSource="{Binding}">
@@ -53,9 +51,8 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="{x:Type local:Cell}">
-                                        <Border Width="{Binding CellWidth}" 
-                                            Height="{Binding CellHeight}" 
-                                            Background="{Binding Background}">
+                                        <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" 
+                                                Background="{Binding Background}">
                                             <Image Source="{Binding File}" 
                                                Stretch="Fill"/>
                                         </Border>

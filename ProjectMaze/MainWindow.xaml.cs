@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +12,6 @@ namespace ProjectMaze
     public partial class MainWindow : Window
     {
         ObservableCollection<ObservableCollection<Cell>> mapCells;
-        public event PropertyChangedEventHandler PropertyChanged;
         Player player { get; set; }
         DispatcherTimer pressedKeyTimer { get; set; }
         int _difficultySelectedIndex = 0;
@@ -66,7 +64,7 @@ namespace ProjectMaze
         private Cell GenerateRandomEmptyPosition(Cell[,] mapArray)
         {
             Random rnd = new Random();
-            int x = 0, y = 0;
+            int x, y;
 
             do
             {
@@ -274,17 +272,6 @@ namespace ProjectMaze
                 e.Handled = true;
             }
         }
-        private void Win()
-        {
-            ResultStepsCount.Text = player.Steps.ToString();
-            ResultPointsCount.Text = player.Points.ToString();
-            ResultGrid.Visibility = Visibility.Visible;
-            RightBorder.Visibility = Visibility.Collapsed;
-            MapBorder.Visibility = Visibility.Collapsed;
-            GenerateWindow.Visibility = Visibility.Visible;
-            Keyboard.ClearFocus();
-        }
-
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.IsRepeat || e.Key == Key.None || player == null)
@@ -364,7 +351,6 @@ namespace ProjectMaze
                 else
                     mapCells[target.y][target.x] = new ExitPlayer { x = target.x, y = target.y };
                 player.Steps++;
-                Console.WriteLine($"Ход совершен.");
             }
             else
             {
@@ -383,11 +369,17 @@ namespace ProjectMaze
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     pressedKeyTimer?.Stop();
-                    Win();
+                    ResultStepsCount.Text = player.Steps.ToString();
+                    ResultPointsCount.Text = player.Points.ToString();
+                    ResultGrid.Visibility = Visibility.Visible;
+                    RightBorder.Visibility = Visibility.Collapsed;
+                    MapBorder.Visibility = Visibility.Collapsed;
+                    GenerateWindow.Visibility = Visibility.Visible;
+                    Keyboard.ClearFocus();
                 }), null);
 
             }
-            Console.WriteLine($"Позиция игрока: [{nextX}][{nextY}]");
+            Console.WriteLine($"Позиция игрока: [{player.x}][{player.y}]");
         }
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {

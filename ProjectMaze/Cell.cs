@@ -112,7 +112,7 @@ namespace ProjectMaze
             set
             {
                 _file = value;
-                OnPropertyChanged("File");
+                OnPropertyChanged();
             }
         }
         Brush background = Brushes.Black;
@@ -137,7 +137,7 @@ namespace ProjectMaze
             set
             {
                 _file = value;
-                OnPropertyChanged("File");
+                OnPropertyChanged();
             }
         }
 
@@ -163,7 +163,7 @@ namespace ProjectMaze
             set
             {
                 _file = value;
-                OnPropertyChanged("File");
+                OnPropertyChanged();
             }
         }
 
@@ -187,7 +187,7 @@ namespace ProjectMaze
             set
             {
                 _file = value;
-                OnPropertyChanged("File");
+                OnPropertyChanged();
             }
         }
     }
