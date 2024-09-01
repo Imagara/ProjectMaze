@@ -99,11 +99,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="src\key.png" />
     <Resource Include="src\player.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="src\background.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="src\wall.png" />

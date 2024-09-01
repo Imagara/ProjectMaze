@@ -54,7 +54,7 @@
                                         <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" 
                                                 Background="{Binding Background}">
                                             <Image Source="{Binding File}" 
-                                               Stretch="Fill"/>
+                                                   Stretch="Fill"/>
                                         </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

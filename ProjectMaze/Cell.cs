@@ -25,11 +25,11 @@ namespace ProjectMaze
         }
         public virtual int CellWidth
         {
-            get 
-            { 
-                if (x % 2 != 0) 
-                    _cellWidth = 3; 
-                return _cellWidth; 
+            get
+            {
+                if (x % 2 != 0)
+                    _cellWidth = 3;
+                return _cellWidth;
             }
             set
             {
@@ -64,7 +64,7 @@ namespace ProjectMaze
         }
 
     }
-    class Space : Cell
+    public class Space : Cell
     {
         public override bool IsTransient => true;
     }

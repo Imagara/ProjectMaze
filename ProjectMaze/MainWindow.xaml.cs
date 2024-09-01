@@ -11,8 +11,10 @@ namespace ProjectMaze
 {
     public partial class MainWindow : Window
     {
+        //Игровое поле
         ObservableCollection<ObservableCollection<Cell>> mapCells;
-        Player player { get; set; }
+        // Игрок
+        Player player { get; set; } 
         DispatcherTimer pressedKeyTimer { get; set; }
         int _difficultySelectedIndex = 0;
         public int DifficultySelectedIndex
@@ -368,6 +370,7 @@ namespace ProjectMaze
             {
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
+                    //Победа
                     pressedKeyTimer?.Stop();
                     ResultStepsCount.Text = player.Steps.ToString();
                     ResultPointsCount.Text = player.Points.ToString();
