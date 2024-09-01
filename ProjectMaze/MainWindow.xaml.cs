@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 namespace ProjectMaze
@@ -270,7 +270,7 @@ namespace ProjectMaze
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Console.WriteLine(ex.Message);
                 e.Handled = true;
             }
         }
@@ -388,6 +388,14 @@ namespace ProjectMaze
 
             }
             Console.WriteLine($"Позиция игрока: [{nextX}][{nextY}]");
+        }
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = (MenuItem)sender;
+            if(menuItem.Header.ToString() == "Справка")
+            MessageBox.Show("Программа была сделана на ");
+            if(menuItem.Header.ToString() == "О разработчике")
+            MessageBox.Show(menuItem.Header.ToString());
         }
     }
 }

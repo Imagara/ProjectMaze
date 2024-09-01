@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Media;
 
 namespace ProjectMaze
@@ -11,13 +10,26 @@ namespace ProjectMaze
         public event PropertyChangedEventHandler PropertyChanged;
         public int x, y;
         private int _cellWidth = 30;
+        public virtual bool IsTransient { get; set; }
+        public virtual bool IsVisited { get; set; }
+        string _file = "empty.png";
+        public virtual Brush Background { get => Brushes.Transparent; set { } }
+        public virtual string File
+        {
+            get => GetImageUri(_file);
+            set
+            {
+                _file = value;
+                OnPropertyChanged();
+            }
+        }
         public virtual int CellWidth
         {
-            get
-            {
+            get 
+            { 
                 if (x % 2 != 0) 
-                    _cellWidth = 3;
-                return _cellWidth;
+                    _cellWidth = 3; 
+                return _cellWidth; 
             }
             set
             {
@@ -38,19 +50,6 @@ namespace ProjectMaze
             set
             {
                 _cellHeight = value;
-                OnPropertyChanged();
-            }
-        }
-        public virtual bool IsTransient { get; set; }
-        public virtual bool IsVisited { get; set; }
-        string _file = "empty.png";
-        public virtual Brush Background { get => Brushes.Transparent; set { } }
-        public virtual string File
-        {
-            get => GetImageUri(_file);
-            set
-            {
-                _file = value;
                 OnPropertyChanged();
             }
         }
@@ -107,23 +106,23 @@ namespace ProjectMaze
     class Wall : Cell
     {
         string _file = "wall.png";
-        public override string File 
-        { 
-            get => GetImageUri(_file); 
-            set 
-            { 
-                _file = value; 
-                OnPropertyChanged("File"); 
+        public override string File
+        {
+            get => GetImageUri(_file);
+            set
+            {
+                _file = value;
+                OnPropertyChanged("File");
             }
         }
         Brush background = Brushes.Black;
-        public override Brush Background 
+        public override Brush Background
         {
-            get => background; 
-            set 
-            { 
+            get => background;
+            set
+            {
                 background = value;
-                OnPropertyChanged(); 
+                OnPropertyChanged();
             }
         }
     }

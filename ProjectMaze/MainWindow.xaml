@@ -14,6 +14,14 @@
             <ColumnDefinition />
             <ColumnDefinition Width="120"/>
         </Grid.ColumnDefinitions>
+        <Menu Height="25" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <MenuItem Header="О программе">
+                <MenuItem Header="Справка" Click="MenuItem_Click"></MenuItem>
+                <MenuItem Header="О разработчике" Click="MenuItem_Click"></MenuItem>
+                <Separator />
+                <MenuItem Header="Exit" ></MenuItem>
+            </MenuItem>
+        </Menu>
         <Border Name="RightBorder" Grid.Column="1" Background="White">
             <Grid Grid.IsSharedSizeScope="True">
                 <StackPanel>
@@ -79,7 +87,7 @@
                         <Run FontSize="14">Собрано семян:</Run>
                         <Run Name="ResultPointsCount"/>
                     </TextBlock>
-                    
+
                 </StackPanel>
 
                 <Label Height="25" Width="120"
@@ -113,5 +121,4 @@
             </ListBox>
         </Grid>
     </Grid>
-
 </Window>
