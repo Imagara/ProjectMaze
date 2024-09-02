@@ -7,6 +7,7 @@ namespace ProjectMaze
 {
     public abstract class Cell : INotifyPropertyChanged
     {
+        public virtual string TestText { get => $"[{x}][{y}]"; set { } }
         public event PropertyChangedEventHandler PropertyChanged;
         public int x, y;
         private int _cellWidth = 30;
@@ -69,7 +70,7 @@ namespace ProjectMaze
         public override bool IsTransient => true;
     }
 
-    class Player : Cell
+    public class Player : Cell
     {
         string _file = "player.png";
         override public string File
@@ -103,7 +104,7 @@ namespace ProjectMaze
             }
         }
     }
-    class Wall : Cell
+    public class Wall : Cell
     {
         string _file = "wall.png";
         public override string File
@@ -126,7 +127,7 @@ namespace ProjectMaze
             }
         }
     }
-    class Point : Cell
+    public class Point : Cell
     {
         public override bool IsTransient => true;
 
@@ -152,7 +153,7 @@ namespace ProjectMaze
             }
         }
     }
-    class Exit : Cell
+    public class Exit : Cell
     {
         public override bool IsTransient => true;
 

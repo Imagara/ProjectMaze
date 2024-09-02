@@ -53,8 +53,10 @@
                                     <DataTemplate DataType="{x:Type local:Cell}">
                                         <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" 
                                                 Background="{Binding Background}">
-                                            <Image Source="{Binding File}" 
-                                                   Stretch="Fill"/>
+                                            <Grid>
+                                                <Image Source="{Binding File}" Stretch="Fill"/>
+                                                <TextBlock Text="{Binding TestText}"></TextBlock>
+                                            </Grid>
                                         </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
@@ -101,6 +103,8 @@
                          VerticalContentAlignment="Center"
                          KeyDown="CheckOnlyDigitsKeyDown"
                          Text="{Binding RowsCount, Mode=TwoWay}"/>
+                <CheckBox Name="TurnSeedCheckBox" 
+                             Content="Семена"/>
                 <ComboBox Height="30" Width="120"
                           Text="0"
                           VerticalContentAlignment="Center"

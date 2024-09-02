@@ -14,7 +14,7 @@ namespace ProjectMaze
         //Игровое поле
         ObservableCollection<ObservableCollection<Cell>> mapCells;
         // Игрок
-        Player player { get; set; } 
+        Player player { get; set; }
         DispatcherTimer pressedKeyTimer { get; set; }
         int _difficultySelectedIndex = 0;
         public int DifficultySelectedIndex
@@ -57,24 +57,29 @@ namespace ProjectMaze
         }
 
         Key currentKey = Key.None;
-        private int GetAllPointsCount => Convert.ToInt32(1 + ((DifficultySelectedIndex+1) * 0.75 * ((ColumnsCount + RowsCount) / 5)));
         public MainWindow()
         {
             InitializeComponent();
             this.DataContext = this;
         }
-        private Cell GenerateRandomEmptyPosition(Cell[,] mapArray)
+        public Cell GenerateRandomEmptyCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
         {
             Random rnd = new Random();
             int x, y;
 
+            if (columnsCount == 0 || rowsCount == 0)
+            {
+                columnsCount = _columnsCount;
+                rowsCount = _rowsCount;
+            }
+
             do
             {
-                x = rnd.Next(0, _columnsCount - 1);
+                x = rnd.Next(0, columnsCount - 1);
                 if (x % 2 != 0)
                     x++;
 
-                y = rnd.Next(0, _rowsCount - 1);
+                y = rnd.Next(0, rowsCount - 1);
                 if (y % 2 != 0)
                     y++;
 
@@ -110,7 +115,7 @@ namespace ProjectMaze
 
             return newlist;
         }
-        private Cell GetWallBetweenCells(Cell first, Cell second)
+        public Cell GetWallBetweenCells(Cell first, Cell second)
         {
             int x, y;
             x = second.x - first.x;
@@ -120,11 +125,17 @@ namespace ProjectMaze
             cell.x = first.x + x; cell.y = first.y + y;
             return cell;
         }
-        private Cell GetRandomUnVisitedCell(Cell[,] mapArray)
+        public Cell GetRandomUnVisitedCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
         {
-            for (int i = 0; i < _columnsCount; i += 2)
+            if(columnsCount == 0 || rowsCount == 0)
             {
-                for (int j = 0; j < _rowsCount; j += 2)
+                columnsCount = _columnsCount;
+                rowsCount = _rowsCount;
+            }
+            
+            for (int i = 0; i < columnsCount; i += 2)
+            {
+                for (int j = 0; j < rowsCount; j += 2)
                 {
                     if (mapArray[i, j] == null)
                         return new Space { x = i, y = j };
@@ -138,11 +149,17 @@ namespace ProjectMaze
             if (traces.Count > _rowsCount / 2 * _columnsCount / 2)
                 traces.RemoveAt(0);
         }
-        private Cell MoveBack(List<Cell> traces)
+        public Cell MoveBack(List<Cell> traces)
         {
             Cell cell = traces.Last();
             traces.RemoveAt(traces.Count() - 1);
             return cell;
+        }
+        private int GetAllPointsCount()
+        {
+            if (TurnSeedCheckBox.IsChecked == false)
+                return 0;
+            return Convert.ToInt32(1 + ((DifficultySelectedIndex + 1) * 0.75 * ((ColumnsCount + RowsCount) / 5)));
         }
         private void MapGenerateButton(object sender, RoutedEventArgs e)
         {
@@ -213,7 +230,7 @@ namespace ProjectMaze
             } while (true);
 
             #region Размещение игрока
-            Cell playerRandomCell = GenerateRandomEmptyPosition(mapArray);
+            Cell playerRandomCell = GenerateRandomEmptyCell(mapArray);
             player = new Player { x = playerRandomCell.x, y = playerRandomCell.y };
             mapArray[playerRandomCell.x, playerRandomCell.y] = player;
             Console.WriteLine($"Позиция игрока: [{playerRandomCell.x}][{playerRandomCell.y}]");
@@ -221,24 +238,26 @@ namespace ProjectMaze
             #endregion
 
             #region Создание выхода
-            Cell exitRandomCell = GenerateRandomEmptyPosition(mapArray);
+            Cell exitRandomCell = GenerateRandomEmptyCell(mapArray);
             Exit exit = new Exit { x = exitRandomCell.x, y = exitRandomCell.y };
             mapArray[exitRandomCell.x, exitRandomCell.y] = exit;
             Console.WriteLine($"Выход был создан [{exitRandomCell.x}][{exitRandomCell.y}]");
             #endregion
 
-            #region Создание Points
-            for (int i = 0; i < GetAllPointsCount; i++)
+
+            #region Создание Seeds
+            for (int i = 0; i < GetAllPointsCount(); i++)
             {
-                Cell randomCell = GenerateRandomEmptyPosition(mapArray);
+                Cell randomCell = GenerateRandomEmptyCell(mapArray);
                 if (randomCell == null)
                     break;
                 Point point = new Point { x = randomCell.x, y = randomCell.y };
                 mapArray[randomCell.x, randomCell.y] = point;
                 Console.WriteLine($"Семечко было создано [{randomCell.x}][{randomCell.y}]");
             }
+
             #endregion
-            Console.WriteLine($"Всего семян было создано: {GetAllPointsCount}");
+            Console.WriteLine($"Всего семян было создано: {GetAllPointsCount()}");
 
 
             for (int j = 0; j < rows; j++)
@@ -366,7 +385,7 @@ namespace ProjectMaze
                 target = null;
             }
 
-            if (target is Exit && GetAllPointsCount <= player.Points)
+            if (target is Exit && GetAllPointsCount() <= player.Points)
             {
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
@@ -387,10 +406,10 @@ namespace ProjectMaze
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             MenuItem menuItem = (MenuItem)sender;
-            if(menuItem.Header.ToString() == "Справка")
-            MessageBox.Show("Программа была сделана на ");
-            if(menuItem.Header.ToString() == "О разработчике")
-            MessageBox.Show(menuItem.Header.ToString());
+            if (menuItem.Header.ToString() == "Справка")
+                MessageBox.Show("Программа была сделана на ");
+            if (menuItem.Header.ToString() == "О разработчике")
+                MessageBox.Show(menuItem.Header.ToString());
         }
     }
 }
