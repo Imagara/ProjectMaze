@@ -71,13 +71,14 @@ namespace ProjectMaze
             Random rnd = new Random();
             int x, y;
 
+           
             if (columnsCount == 0 || rowsCount == 0)
             {
                 columnsCount = _columnsCount;
                 rowsCount = _rowsCount;
             }
 
-            do
+            do // Нахождение свободной ячейки
             {
                 x = rnd.Next(0, columnsCount - 1);
                 if (x % 2 != 0)
@@ -92,10 +93,14 @@ namespace ProjectMaze
         }
         public List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
         {
+            //Дистанция ходьбы
             int walkDist = 2;
+
+            //Расположение клетки
             int x = cell.x;
             int y = cell.y;
 
+            //Соседние клетки
             Cell left = new Space { x = x - walkDist, y = y };
             Cell up = new Space { x = x, y = y - walkDist };
             Cell right = new Space { x = x + walkDist, y = y };
@@ -108,8 +113,10 @@ namespace ProjectMaze
             {
                 if (n.x >= 0 && n.x < width && n.y >= 0 && n.y < height) // Если в пределах лабиринта
                 {
+                    //Проверка была ли посещена клетка
                     if (isVisitedCheck && (mapArray[n.x, n.y] == null || !mapArray[n.x, n.y].IsVisited))
                         newlist.Add(n);
+                    //Без проверки
                     else if (!isVisitedCheck)
                         newlist.Add(n);
                 }
@@ -118,6 +125,7 @@ namespace ProjectMaze
         }
         public Cell GetWallBetweenCells(Cell first, Cell second)
         {
+            //Получение клетки между двумя другими
             int x, y;
             x = second.x - first.x;
             y = second.y - first.y;
@@ -128,6 +136,7 @@ namespace ProjectMaze
         }
         public Cell GetRandomUnVisitedCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
         {
+            //Получение случайной не посещенной клетки
             for (int i = 0; i < columnsCount; i += 2)
             {
                 for (int j = 0; j < rowsCount; j += 2)
@@ -140,25 +149,30 @@ namespace ProjectMaze
         }
         public void AddToTraces(Cell cell, List<Cell> traces)
         {
+            //Добавление в список с историей пройденных клеток
             traces.Add(cell);
+            //Если список слишком большой - удаляется первая клетка в списке
             if (traces.Count > _rowsCount / 2 * _columnsCount / 2)
                 traces.RemoveAt(0);
         }
         public Cell MoveBack(List<Cell> traces)
         {
+            //Передвижение на прошлую клетку (из списка с историей пройденных клеток)
             Cell cell = traces.Last();
             traces.RemoveAt(traces.Count() - 1);
             return cell;
         }
         private int GetAllPointsCount()
         {
-            if (TurnSeedCheckBox.IsChecked == false)
+            //Получение количества семян, которые должны будут сгенерированы(или их общее количество) на карте
+            if (TurnSeedCheckBox.IsChecked == false)//Если семена отключены 
                 return 0;
             return Convert.ToInt32(1 + ((DifficultySelectedIndex + 1) * 0.75 * ((ColumnsCount + RowsCount) / 5)));
         }
         private void MapGenerateButton(object sender, RoutedEventArgs e)
         {
             Console.WriteLine($"\n\n\nГенерация...");
+            //Определение размеров лабиринта
             int rows = _rowsCount, columns = _columnsCount;
             Console.WriteLine($"Размер лабиринта = {RowsCount}x{ColumnsCount}");
 
@@ -166,6 +180,7 @@ namespace ProjectMaze
             Cell[,] mapArray = new Cell[columns, rows];
             mapCells = new ObservableCollection<ObservableCollection<Cell>>();
 
+            //Стартовая точка генерации
             Cell startCell = new Space
             {
                 x = 0,
@@ -180,7 +195,7 @@ namespace ProjectMaze
             List<Cell> neighbours;
             do
             {
-                if (isRandomGenerated)
+                if (isRandomGenerated)//Если следующая ячейка генерируется случайно
                 {
                     neighbours = GetNeighbours(currentCell, columns, rows, mapArray, !isRandomGenerated);
                     isRandomGenerated = false;
@@ -190,7 +205,7 @@ namespace ProjectMaze
                     neighbours = GetNeighbours(currentCell, columns, rows, mapArray);
                 }
 
-                if (neighbours.Count() != 0)
+                if (neighbours.Count() != 0) //Если есть соседние клетки
                 {
                     int rand = rnd.Next(neighbours.Count());
                     Cell neighbourCell = neighbours[rand];
@@ -198,27 +213,32 @@ namespace ProjectMaze
                     mapArray[neighbourCell.x, neighbourCell.y] = neighbourCell;
                     Console.WriteLine($"Выбрана ячейка для хода: [{neighbourCell.x}][{neighbourCell.y}]");
 
+                    //Удаление стены между новой и прошлой клеткой
                     Cell wall = GetWallBetweenCells(currentCell, neighbourCell);
                     mapArray[wall.x, wall.y] = wall;
 
+                    //Добавление клетки в список с историей ходов
                     AddToTraces(currentCell, traces);
                     currentCell = neighbourCell;
                 }
-                else if (neighbours.Count() == 0 && traces.Count > 0 && currentCell != traces.First())
+                else if (neighbours.Count() == 0 && traces.Count > 0 && currentCell != traces.First()) //Если нет соседей и можно вернутся назад
                 {
                     if (traces.Count % 10 == 0 && GetRandomUnVisitedCell(mapArray) == null)
                         break;
+                    //Ход назад
                     currentCell = MoveBack(traces);
                     Console.WriteLine($"Возврат на [{currentCell.x}][{currentCell.y}]");
                 }
                 else if (GetRandomUnVisitedCell(mapArray) != null)
                 {
+                    //Генерация следующей клетки случайно
                     currentCell = GetRandomUnVisitedCell(mapArray);
                     Console.WriteLine($"Переход на точку: [{currentCell.x}][{currentCell.y}]");
                     isRandomGenerated = true;
                 }
                 else
                 {
+                    //Лабиринт сгенерирован, выход из цикла
                     Console.WriteLine($"Все клетки посещены. Лабиринт сгенерирован");
                     break;
                 }
@@ -385,6 +405,7 @@ namespace ProjectMaze
         #endregion
         private void CheckOnlyDigitsKeyDown(object sender, KeyEventArgs e)
         {
+            //Проверка на ввод ТОЛЬКО цифр
             try
             {
                 string number = e.Key.ToString();
@@ -401,6 +422,7 @@ namespace ProjectMaze
         }
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
+            //Пункты в меню "О программе"
             MenuItem menuItem = (MenuItem)sender;
             if (menuItem.Header.ToString() == "Справка")
                 MessageBox.Show(
