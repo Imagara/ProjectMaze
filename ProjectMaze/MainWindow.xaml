@@ -20,7 +20,7 @@
                 <MenuItem Header="Справка" Click="MenuItem_Click"></MenuItem>
                 <MenuItem Header="О разработчике" Click="MenuItem_Click"></MenuItem>
                 <Separator />
-                <MenuItem Header="Exit" ></MenuItem>
+                <MenuItem Header="Закрыть" ></MenuItem>
             </MenuItem>
         </Menu>
         <Border Name="RightBorder" Grid.Column="1" Background="White">
@@ -53,10 +53,7 @@
                                     <DataTemplate DataType="{x:Type local:Cell}">
                                         <Border Width="{Binding CellWidth}" Height="{Binding CellHeight}" 
                                                 Background="{Binding Background}">
-                                            <Grid>
-                                                <Image Source="{Binding File}" Stretch="Fill"/>
-                                                <TextBlock Text="{Binding TestText}"></TextBlock>
-                                            </Grid>
+                                            <Image Source="{Binding File}" Stretch="Fill"/>
                                         </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

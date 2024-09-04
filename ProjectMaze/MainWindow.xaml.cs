@@ -15,7 +15,12 @@ namespace ProjectMaze
         ObservableCollection<ObservableCollection<Cell>> mapCells;
         // Игрок
         Player player { get; set; }
+        //Таймер для движения игрока без повторного нажатия на клавишу передвижения
         DispatcherTimer pressedKeyTimer { get; set; }
+        //Нажатая клавиша
+        Key currentKey = Key.None;
+        #region Maze settings
+        //Выбранная сложность
         int _difficultySelectedIndex = 0;
         public int DifficultySelectedIndex
         {
@@ -25,7 +30,7 @@ namespace ProjectMaze
                 _difficultySelectedIndex = value;
             }
         }
-
+        // Размер лабиринта (строки)
         int _rowsCount = 15;
         public int RowsCount
         {
@@ -40,7 +45,7 @@ namespace ProjectMaze
                     _rowsCount = (value * 2) - 1;
             }
         }
-
+        // Размер лабиринта (столбцы)
         int _columnsCount = 15;
         public int ColumnsCount
         {
@@ -55,8 +60,7 @@ namespace ProjectMaze
                     _columnsCount = (value * 2) - 1;
             }
         }
-
-        Key currentKey = Key.None;
+        #endregion
         public MainWindow()
         {
             InitializeComponent();
@@ -78,17 +82,15 @@ namespace ProjectMaze
                 x = rnd.Next(0, columnsCount - 1);
                 if (x % 2 != 0)
                     x++;
-
                 y = rnd.Next(0, rowsCount - 1);
                 if (y % 2 != 0)
                     y++;
-
             } while (mapArray[x, y] is not Space);
 
             Cell emptyCell = new Space { x = x, y = y };
             return emptyCell;
         }
-        private List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
+        public List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
         {
             int walkDist = 2;
             int x = cell.x;
@@ -112,7 +114,6 @@ namespace ProjectMaze
                         newlist.Add(n);
                 }
             }
-
             return newlist;
         }
         public Cell GetWallBetweenCells(Cell first, Cell second)
@@ -127,12 +128,6 @@ namespace ProjectMaze
         }
         public Cell GetRandomUnVisitedCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
         {
-            if(columnsCount == 0 || rowsCount == 0)
-            {
-                columnsCount = _columnsCount;
-                rowsCount = _rowsCount;
-            }
-            
             for (int i = 0; i < columnsCount; i += 2)
             {
                 for (int j = 0; j < rowsCount; j += 2)
@@ -143,7 +138,7 @@ namespace ProjectMaze
             }
             return null;
         }
-        private void AddToTraces(Cell cell, List<Cell> traces)
+        public void AddToTraces(Cell cell, List<Cell> traces)
         {
             traces.Add(cell);
             if (traces.Count > _rowsCount / 2 * _columnsCount / 2)
@@ -244,7 +239,6 @@ namespace ProjectMaze
             Console.WriteLine($"Выход был создан [{exitRandomCell.x}][{exitRandomCell.y}]");
             #endregion
 
-
             #region Создание Seeds
             for (int i = 0; i < GetAllPointsCount(); i++)
             {
@@ -257,8 +251,8 @@ namespace ProjectMaze
             }
 
             #endregion
-            Console.WriteLine($"Всего семян было создано: {GetAllPointsCount()}");
 
+            Console.WriteLine($"Всего семян было создано: {GetAllPointsCount()}");
 
             for (int j = 0; j < rows; j++)
             {
@@ -277,22 +271,7 @@ namespace ProjectMaze
             RightBorder.Visibility = Visibility.Visible;
             MapBorder.Visibility = Visibility.Visible;
         }
-        private void CheckOnlyDigitsKeyDown(object sender, KeyEventArgs e)
-        {
-            try
-            {
-                string number = e.Key.ToString();
-                if (number.Length > 1)
-                    number = number.Substring(1);
-                if (!Char.IsDigit(char.Parse(number)))
-                    e.Handled = true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                e.Handled = true;
-            }
-        }
+        #region Player movement 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.IsRepeat || e.Key == Key.None || player == null)
@@ -403,13 +382,44 @@ namespace ProjectMaze
             }
             Console.WriteLine($"Позиция игрока: [{player.x}][{player.y}]");
         }
+        #endregion
+        private void CheckOnlyDigitsKeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                string number = e.Key.ToString();
+                if (number.Length > 1)
+                    number = number.Substring(1);
+                if (!Char.IsDigit(char.Parse(number)))
+                    e.Handled = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                e.Handled = true;
+            }
+        }
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             MenuItem menuItem = (MenuItem)sender;
             if (menuItem.Header.ToString() == "Справка")
-                MessageBox.Show("Программа была сделана на ");
+                MessageBox.Show(
+                    "\t\t\tИгра лабиринты\n" +
+                    "В данной игре необходимо передвигаясь по клеткам найти выход\n" +
+                    "Управление происходит персонажем \"Курочка\" на стрелочки:\n" +
+                    "\t← - передвижение влево\n" +
+                    "\t↑ - передвижение вверх\n" +
+                    "\t→ - передвижение вправо\n" +
+                    "\t↓ - передвижение вниз\n" +
+                    "Данные клавиши можно нажимать для одного хода или зажимать, чтобы персонаж двигался к ближайшей стене в выбранном направлении."
+                    );
             if (menuItem.Header.ToString() == "О разработчике")
-                MessageBox.Show(menuItem.Header.ToString());
+                MessageBox.Show(
+                    "Данная игра была выполнена при выполнении курсового проекта:\n" +
+                    "Объектно-ориентированное программирование (КП)\n" +
+                    "Индивидуальный вариант: 13 Лабиринты\n" +
+                    "Выполнил: Гавриленко Артём Вячеславович\n" +
+                    "Группа: з-423П10-4");
         }
     }
 }

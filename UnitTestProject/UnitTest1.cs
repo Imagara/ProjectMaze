@@ -2,6 +2,7 @@
 using ProjectMaze;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace UnitTestProject
@@ -30,13 +31,11 @@ namespace UnitTestProject
                 new Space { x = 2, y = 2, IsVisited = true}
             }
         };
-        Cell[,] testArray2 = new Cell[3, 3];
-
 
         [TestMethod]
         public void MoveBackTest()
         {
-            List<Cell> cells = new List<Cell>();
+            List<Cell> cells = new();
             Cell cell1 = new Space { x = 0, y = 0 };
             Cell cell2 = new Space { x = 2, y = 0 };
             cells.Add(cell1);
@@ -53,13 +52,21 @@ namespace UnitTestProject
             Cell RandomEmptyCell = new MainWindow().GenerateRandomEmptyCell(testArray, 3, 3);
             Assert.IsTrue(RandomEmptyCell.x == expected.x && RandomEmptyCell.y == expected.y);
         }
+        [TestMethod]
+        public void GetNeighboursTest()
+        {
+            List<Cell> expected = new();
+            Cell cellExpected1 = new Space { x = 0, y = 2 };
+            Cell cellExpected2 = new Space { x = 2, y = 0 };
+            expected.Add(cellExpected2);
+            expected.Add(cellExpected1);
 
-        //public void GetNeighboursTest()
-        //{
-        //    Cell expected = new Space { x = 0, y = 0 };
-        //    //testArray2[0,0] =
-        //    Assert.AreEqual(new MainWindow().GetNeighbours(testArray, 3, 3), expected);
-        //}
+            Cell cell = new Space { x = 0, y = 0 };
+
+            List<Cell> listNeighbours = new MainWindow().GetNeighbours(cell, 3, 3, testArray, false);
+
+            Assert.IsTrue(string.Join("|", listNeighbours.Select(item => item.x + " " + item.y)).ToString() == string.Join("|", expected.Select(item => item.x + " " + item.y)).ToString());
+        }
         [TestMethod]
         public void GetWallBetweenCellsTest()
         {
@@ -70,6 +77,18 @@ namespace UnitTestProject
             Cell WallBetweenCells = new MainWindow().GetWallBetweenCells(cell1, cell2);
 
             Assert.IsTrue(WallBetweenCells.x == expected.x && WallBetweenCells.y == expected.y);
+        }
+        [TestMethod]
+        public void AddToTracesTest()
+        {
+            List<Cell> expected = new();
+            Cell testCell = new Space { x = 2, y = 2 };
+            expected.Add(testCell);
+
+            List<Cell> traces = new();
+
+            new MainWindow().AddToTraces(testCell, traces);
+            Assert.AreEqual(string.Join("|", traces).ToString(), string.Join("|", expected).ToString());
         }
     }
 }
