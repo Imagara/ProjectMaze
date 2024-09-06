@@ -63,7 +63,6 @@ namespace ProjectMaze
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
-
     }
     public class Space : Cell
     {
