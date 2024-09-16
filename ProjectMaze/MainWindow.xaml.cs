@@ -211,7 +211,7 @@ namespace ProjectMaze
                     Cell neighbourCell = neighbours[rand];
                     neighbourCell.IsVisited = true;
                     mapArray[neighbourCell.x, neighbourCell.y] = neighbourCell;
-                    Console.WriteLine($"Выбрана ячейка для хода: [{neighbourCell.x}][{neighbourCell.y}]");
+                    Console.WriteLine($"Переход на точку: [{neighbourCell.x}][{neighbourCell.y}]");
 
                     //Удаление стены между новой и прошлой клеткой
                     Cell wall = GetWallBetweenCells(currentCell, neighbourCell);
@@ -223,8 +223,6 @@ namespace ProjectMaze
                 }
                 else if (neighbours.Count() == 0 && traces.Count > 0 && currentCell != traces.First()) //Если нет соседей и можно вернутся назад
                 {
-                    if (traces.Count % 10 == 0 && GetRandomUnVisitedCell(mapArray) == null)
-                        break;
                     //Ход назад
                     currentCell = MoveBack(traces);
                     Console.WriteLine($"Возврат на [{currentCell.x}][{currentCell.y}]");
@@ -233,7 +231,7 @@ namespace ProjectMaze
                 {
                     //Генерация следующей клетки случайно
                     currentCell = GetRandomUnVisitedCell(mapArray);
-                    Console.WriteLine($"Переход на точку: [{currentCell.x}][{currentCell.y}]");
+                    Console.WriteLine($"Переход к следующей случайной клетке: [{currentCell.x}][{currentCell.y}]");
                     isRandomGenerated = true;
                 }
                 else
@@ -269,10 +267,9 @@ namespace ProjectMaze
                 mapArray[randomCell.x, randomCell.y] = point;
                 Console.WriteLine($"Семечко было создано [{randomCell.x}][{randomCell.y}]");
             }
-
+            Console.WriteLine($"Всего семян было создано: {GetAllPointsCount()}");
             #endregion
 
-            Console.WriteLine($"Всего семян было создано: {GetAllPointsCount()}");
 
             for (int j = 0; j < rows; j++)
             {

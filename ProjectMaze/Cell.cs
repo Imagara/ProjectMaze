@@ -7,7 +7,6 @@ namespace ProjectMaze
 {
     public abstract class Cell : INotifyPropertyChanged
     {
-        //public virtual string TestText { get => $"[{x}][{y}]"; set { } }
         public event PropertyChangedEventHandler PropertyChanged;
         public int x, y;
         private int _cellWidth = 30;
