@@ -71,7 +71,7 @@ namespace ProjectMaze
             Random rnd = new Random();
             int x, y;
 
-           
+
             if (columnsCount == 0 || rowsCount == 0)
             {
                 columnsCount = _columnsCount;
@@ -188,6 +188,7 @@ namespace ProjectMaze
                 IsVisited = true
             };
             mapArray[startCell.x, startCell.y] = startCell;
+            Console.WriteLine($"Стартовая точка генерации: [{startCell.x}][{startCell.y}]");
             Cell currentCell = startCell;
             Random rnd = new Random();
             bool isRandomGenerated = false;
