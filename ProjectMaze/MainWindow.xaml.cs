@@ -88,7 +88,7 @@ namespace ProjectMaze
                     y++;
             } while (mapArray[x, y] is not Space);
 
-            Cell emptyCell = new Space { x = x, y = y };
+            Cell emptyCell = new Space(x, y);
             return emptyCell;
         }
         public List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
@@ -101,10 +101,10 @@ namespace ProjectMaze
             int y = cell.y;
 
             //Соседние клетки
-            Cell left = new Space { x = x - walkDist, y = y };
-            Cell up = new Space { x = x, y = y - walkDist };
-            Cell right = new Space { x = x + walkDist, y = y };
-            Cell down = new Space { x = x, y = y + walkDist };
+            Cell left = new Space(x - walkDist, y);
+            Cell up = new Space(x, y - walkDist);
+            Cell right = new Space(x + walkDist, y);
+            Cell down = new Space(x, y + walkDist);
 
             List<Cell> nlist = [left, up, right, down];
             List<Cell> newlist = new();
@@ -130,8 +130,7 @@ namespace ProjectMaze
             x = second.x - first.x;
             y = second.y - first.y;
             x /= 2; y /= 2;
-            Cell cell = new Space();
-            cell.x = first.x + x; cell.y = first.y + y;
+            Cell cell = new Space(first.x + x, first.y + y);
             return cell;
         }
         public Cell GetRandomUnVisitedCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
@@ -142,7 +141,7 @@ namespace ProjectMaze
                 for (int j = 0; j < rowsCount; j += 2)
                 {
                     if (mapArray[i, j] == null)
-                        return new Space { x = i, y = j };
+                        return new Space(i, j);
                 }
             }
             return null;
@@ -181,12 +180,7 @@ namespace ProjectMaze
             mapCells = new ObservableCollection<ObservableCollection<Cell>>();
 
             //Стартовая точка генерации
-            Cell startCell = new Space
-            {
-                x = 0,
-                y = 0,
-                IsVisited = true
-            };
+            Cell startCell = new Space(0, 0, true);
             mapArray[startCell.x, startCell.y] = startCell;
             Console.WriteLine($"Стартовая точка генерации: [{startCell.x}][{startCell.y}]");
             Cell currentCell = startCell;
@@ -245,7 +239,7 @@ namespace ProjectMaze
 
             #region Размещение игрока
             Cell playerRandomCell = GenerateRandomEmptyCell(mapArray);
-            player = new Player { x = playerRandomCell.x, y = playerRandomCell.y };
+            player = new Player(playerRandomCell.x, playerRandomCell.y);
             mapArray[playerRandomCell.x, playerRandomCell.y] = player;
             Console.WriteLine($"Позиция игрока: [{playerRandomCell.x}][{playerRandomCell.y}]");
             RightBorder.DataContext = player;
@@ -253,7 +247,7 @@ namespace ProjectMaze
 
             #region Создание выхода
             Cell exitRandomCell = GenerateRandomEmptyCell(mapArray);
-            Exit exit = new Exit { x = exitRandomCell.x, y = exitRandomCell.y };
+            Exit exit = new Exit(exitRandomCell.x, exitRandomCell.y);
             mapArray[exitRandomCell.x, exitRandomCell.y] = exit;
             Console.WriteLine($"Выход был создан [{exitRandomCell.x}][{exitRandomCell.y}]");
             #endregion
@@ -264,7 +258,7 @@ namespace ProjectMaze
                 Cell randomCell = GenerateRandomEmptyCell(mapArray);
                 if (randomCell == null)
                     break;
-                Point point = new Point { x = randomCell.x, y = randomCell.y };
+                Point point = new Point(randomCell.x, randomCell.y);
                 mapArray[randomCell.x, randomCell.y] = point;
                 Console.WriteLine($"Семечко было создано [{randomCell.x}][{randomCell.y}]");
             }
@@ -280,7 +274,7 @@ namespace ProjectMaze
                     if (mapArray[i, j] != null)
                         mapCells[j].Add(mapArray[i, j]);
                     else
-                        mapCells[j].Add(new Wall { x = i, y = j });
+                        mapCells[j].Add(new Wall(i, j));
                 }
             }
 
@@ -357,9 +351,9 @@ namespace ProjectMaze
             if (target.IsTransient && targetWall.IsTransient)
             {
                 if (recentPlayerPos is not ExitPlayer && recentPlayerPos is not Exit)
-                    mapCells[Y][X] = new Space() { y = Y, x = X };
+                    mapCells[Y][X] = new Space(X, Y);
                 else
-                    mapCells[Y][X] = new Exit() { y = Y, x = X };
+                    mapCells[Y][X] = new Exit(X, Y);
 
                 player.y = target.y;
                 player.x = target.x;
@@ -367,7 +361,7 @@ namespace ProjectMaze
                 if (target is not Exit)
                     mapCells[target.y][target.x] = player;
                 else
-                    mapCells[target.y][target.x] = new ExitPlayer { x = target.x, y = target.y };
+                    mapCells[target.y][target.x] = new ExitPlayer(target.x, target.y);
                 player.Steps++;
             }
             else
@@ -409,7 +403,9 @@ namespace ProjectMaze
                 string number = e.Key.ToString();
                 if (number.Length > 1)
                     number = number.Substring(1);
-                if (!Char.IsDigit(char.Parse(number)))
+                if (e.Key == Key.Tab || e.Key == Key.Escape)
+                    e.Handled = false;
+                else if (!Char.IsDigit(char.Parse(number)))
                     e.Handled = true;
             }
             catch (Exception ex)

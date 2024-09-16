@@ -107,9 +107,9 @@
                           VerticalContentAlignment="Center"
                           SelectedItem="0"
                           SelectedIndex="{Binding DifficultySelectedIndex}">
-                    <ComboBoxItem>Легко</ComboBoxItem>
+                    <ComboBoxItem>Мало</ComboBoxItem>
                     <ComboBoxItem>Средне</ComboBoxItem>
-                    <ComboBoxItem>Сложно</ComboBoxItem>
+                    <ComboBoxItem>Много</ComboBoxItem>
                 </ComboBox>
                 <Button Margin="0,10,0,0" 
                         Height="30" Width="120"

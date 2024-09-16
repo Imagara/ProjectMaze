@@ -33,7 +33,7 @@
   <Class Name="ProjectMaze.Wall">
     <Position X="9.25" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAIAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAgAAAAMAA=</HashCode>
       <FileName>Cell.cs</FileName>
     </TypeIdentifier>
   </Class>

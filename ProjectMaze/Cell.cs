@@ -7,6 +7,11 @@ namespace ProjectMaze
 {
     public abstract class Cell : INotifyPropertyChanged
     {
+        public Cell(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public int x, y;
         private int _cellWidth = 30;
@@ -65,6 +70,11 @@ namespace ProjectMaze
     }
     public class Space : Cell
     {
+        public Space(int x, int y, bool isVisited = false) : base(x, y)
+        {
+
+        }
+
         public override bool IsTransient => true;
     }
 
@@ -92,6 +102,12 @@ namespace ProjectMaze
         }
 
         int _points = 0;
+
+        public Player(int x, int y) : base(x, y)
+        {
+
+        }
+
         public int Points
         {
             get => _points;
@@ -115,6 +131,11 @@ namespace ProjectMaze
             }
         }
         Brush background = Brushes.Black;
+
+        public Wall(int x, int y) : base(x, y)
+        {
+        }
+
         public override Brush Background
         {
             get => background;
@@ -141,6 +162,11 @@ namespace ProjectMaze
         }
 
         Brush background = Brushes.Transparent;
+
+        public Point(int x, int y) : base(x, y)
+        {
+        }
+
         public override Brush Background
         {
             get => background;
@@ -167,6 +193,11 @@ namespace ProjectMaze
         }
 
         Brush background = Brushes.Transparent;
+
+        public Exit(int x, int y) : base(x, y)
+        {
+        }
+
         public override Brush Background
         {
             get => background;
@@ -180,6 +211,11 @@ namespace ProjectMaze
     class ExitPlayer : Exit
     {
         string _file = "player_exit.png";
+
+        public ExitPlayer(int x, int y) : base(x, y)
+        {
+        }
+
         new public string File
         {
             get => GetImageUri(_file);
