@@ -335,11 +335,11 @@ namespace ProjectMaze
 
             int nextY = Y + dy, nextX = X + dx;
 
+            //Если целевая точка в пределах лабиринта
             if (nextX < 0 || nextX > _columnsCount - 1)
                 return;
             if (nextY < 0 || nextY > _rowsCount - 1)
                 return;
-
             if (mapCells[Y + dy * 2][X + dx * 2] == null)
                 return;
 
@@ -405,6 +405,7 @@ namespace ProjectMaze
                     number = number.Substring(1);
                 if (e.Key == Key.Tab || e.Key == Key.Escape)
                     e.Handled = false;
+                // Если не цифра - запретить ввод
                 else if (!Char.IsDigit(char.Parse(number)))
                     e.Handled = true;
             }
@@ -421,7 +422,7 @@ namespace ProjectMaze
             if (menuItem.Header.ToString() == "Справка")
                 MessageBox.Show(
                     "\t\t\tИгра лабиринты\n" +
-                    "В данной игре необходимо передвигаясь по клеткам найти выход\n" +
+                    "В данной игре необходимо передвигаясь по клеткам найти выход.\n" +
                     "Управление происходит персонажем \"Курочка\" на стрелочки:\n" +
                     "\t← - передвижение влево\n" +
                     "\t↑ - передвижение вверх\n" +

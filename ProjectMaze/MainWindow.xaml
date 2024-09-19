@@ -7,33 +7,13 @@
         mc:Ignorable="d"
         KeyDown="Window_KeyDown"
         KeyUp="Window_KeyUp"
-        Title="MainWindow" 
+        Title="Лабиринт" 
         Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="120"/>
         </Grid.ColumnDefinitions>
-        <Menu Height="25" VerticalAlignment="Top" Grid.ColumnSpan="2"
-              Background="Transparent">
-            <MenuItem Header="О программе">
-                <MenuItem Header="Справка" Click="MenuItem_Click"></MenuItem>
-                <MenuItem Header="О разработчике" Click="MenuItem_Click"></MenuItem>
-                <Separator />
-                <MenuItem Header="Закрыть" ></MenuItem>
-            </MenuItem>
-        </Menu>
-        <Border Name="RightBorder" Grid.Column="1" Background="White">
-            <Grid Grid.IsSharedSizeScope="True">
-                <StackPanel>
-                    <TextBlock Text="{Binding Points, StringFormat='Очки:  {0}'}" 
-                               FontSize="18"/>
-                    <TextBlock Text="{Binding Steps, StringFormat='Шаги: {0}'}" 
-                               FontSize="18"/>
-                </StackPanel>
-            </Grid>
-        </Border>
-
         <Viewbox>
             <Border Name="MapBorder"
                     BorderBrush="Black" 
@@ -63,6 +43,17 @@
                 </ItemsControl>
             </Border>
         </Viewbox>
+
+        <Border Name="RightBorder" Grid.Column="1" Background="White">
+            <Grid Grid.IsSharedSizeScope="True">
+                <StackPanel>
+                    <TextBlock Text="{Binding Points, StringFormat='Очки:  {0}'}" 
+                               FontSize="18"/>
+                    <TextBlock Text="{Binding Steps, StringFormat='Шаги: {0}'}" 
+                               FontSize="18"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
         <Grid Name="GenerateWindow" 
               Grid.ColumnSpan="2">
@@ -118,5 +109,18 @@
                 </Button>
             </ListBox>
         </Grid>
+
+        <Menu Height="25"
+              VerticalAlignment="Top" 
+              Grid.ColumnSpan="2"
+              Background="Transparent">
+            <MenuItem Header="О программе"
+                      Background="White">
+                <MenuItem Header="Справка" Click="MenuItem_Click"></MenuItem>
+                <MenuItem Header="О разработчике" Click="MenuItem_Click"></MenuItem>
+                <Separator />
+                <MenuItem Header="Закрыть" ></MenuItem>
+            </MenuItem>
+        </Menu>
     </Grid>
 </Window>
