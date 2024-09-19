@@ -168,7 +168,7 @@ namespace ProjectMaze
                 return 0;
             return Convert.ToInt32(1 + ((DifficultySelectedIndex + 1) * 0.75 * ((ColumnsCount + RowsCount) / 5)));
         }
-        private void MapGenerateButton(object sender, RoutedEventArgs e)
+        private void GetGeneratedMap(object sender, RoutedEventArgs e)
         {
             Console.WriteLine($"\n\n\nГенерация...");
             //Определение размеров лабиринта
