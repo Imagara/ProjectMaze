@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace ProjectMaze
 {
-    public abstract class Cell : INotifyPropertyChanged
+    internal abstract class Cell : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -16,22 +16,18 @@ namespace ProjectMaze
         private int _cellWidth = 30;
         //Высота клетки
         private int _cellHeight = 30;
+        //Вид клетки (Игрок/Стена/Пустая клетка/Выход/Игрок в выходе)
+        private string _file = "empty.png";
         // Можно ли пройти через эту клетку
         public virtual bool IsTransient { get; set; }
         // Посещелась ли эта клетка (используется при генерации)
-        public virtual bool IsVisited { get; set; }
-        //Вид клетки (Игрок/Стена/Пустая клетка/Выход/Игрок в выходе)
-        string _file = "empty.png";
-        public virtual Brush Background { get => Brushes.Transparent; set { } }
+        public bool IsVisited { get; set; }
 
-        //Конструктор Cell
-        public Cell(int x, int y)
+        public virtual Brush Background
         {
-            this.x = x;
-            this.y = y;
+            get => Brushes.Transparent;
+            set { }
         }
-
-        
         public virtual string File
         {
             get => GetImageUri(_file);
@@ -67,17 +63,25 @@ namespace ProjectMaze
                 OnPropertyChanged();
             }
         }
-        protected string GetImageUri(string shortname)
+
+        //Конструктор Cell
+        public Cell(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        internal string GetImageUri(string shortname)
         {
             string src = new AssemblyName(GetType().Assembly.FullName).Name;
             return "/" + src + ";component/src/" + shortname;
         }
-        protected void OnPropertyChanged([CallerMemberName] string prop = null)
+        internal void OnPropertyChanged([CallerMemberName] string prop = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
-    public class Space : Cell
+    internal class Space : Cell
     {
         //Конструктор пустой клетки (Проходимой)
         public Space(int x, int y, bool isVisited = false) : base(x, y)
@@ -88,7 +92,7 @@ namespace ProjectMaze
         public override bool IsTransient => true;
     }
 
-    public class Player : Cell
+    internal class Player : Cell
     {
         //Вид ячейки - курочка
         string _file = "player.png";
@@ -103,7 +107,7 @@ namespace ProjectMaze
 
         }
 
-        override public string File
+        public override string File
         {
             get => GetImageUri(_file);
             set
@@ -132,7 +136,7 @@ namespace ProjectMaze
             }
         }
     }
-    public class Wall : Cell
+    internal class Wall : Cell
     {
         //Вид ячейки - стена (непроходимая)
         string _file = "wall.png";
@@ -162,7 +166,7 @@ namespace ProjectMaze
             }
         }
     }
-    public class Point : Cell
+    internal class Point : Cell
     {
         public override bool IsTransient => true;
         //Вид ячейки - семечко
@@ -183,8 +187,6 @@ namespace ProjectMaze
             }
         }
 
-
-
         public override Brush Background
         {
             get => _background;
@@ -195,10 +197,10 @@ namespace ProjectMaze
             }
         }
     }
-    public class Exit : Cell
+    internal class Exit : Cell
     {
         public override bool IsTransient => true;
-        string _file = "exit.png";
+        private string _file = "exit.png";
         Brush _background = Brushes.Transparent;
 
         //Конструктор
@@ -206,7 +208,7 @@ namespace ProjectMaze
         {
         }
 
-        new public string File
+        public override string File
         {
             get => GetImageUri(_file);
             set
@@ -229,13 +231,13 @@ namespace ProjectMaze
     class ExitPlayer : Exit
     {
         //Вид ячейки - игрок в выходе
-        string _file = "player_exit.png";
+        private string _file = "player_exit.png";
         //Конструктор
         public ExitPlayer(int x, int y) : base(x, y)
         {
         }
 
-        new public string File
+        public override string File
         {
             get => GetImageUri(_file);
             set

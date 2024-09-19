@@ -1,15 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="ProjectMaze.MainWindow">
-    <Position X="5" Y="1.25" Width="2.25" />
+  <Class Name="ProjectMaze.MazeGenerator">
+    <Position X="5.25" Y="6.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABACIAAwEJADEAABAAAACgAAAAAAAAIBAAAAAAARJoA=</HashCode>
+      <HashCode>AAAAIQAwEBACEAAAAABAAAAAAAAAAAYBCAAAAAAABgA=</HashCode>
+      <FileName>MazeGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProjectMaze.MainWindow">
+    <Position X="5.25" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABACAQAAAIACEAABAAAACgAAAAAABAIBAAAAAAARIIA=</HashCode>
       <FileName>MainWindow.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ProjectMaze.Cell">
-    <Position X="9.25" Y="1.75" Width="1.5" />
+    <Position X="9" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>CAAAAAAAAgAAAAAAIAAAAABAgCAEAAAAAABgAAAIEGA=</HashCode>
       <FileName>Cell.cs</FileName>
@@ -17,42 +24,42 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ProjectMaze.Space">
-    <Position X="11.5" Y="2.75" Width="1.5" />
+    <Position X="11.25" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
       <FileName>Cell.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ProjectMaze.Player">
-    <Position X="13.25" Y="0.5" Width="1.5" />
+    <Position X="12.75" Y="9.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAABIAAAAAAAgAAAgAAAAAAAAAAEAAAAAAAAAAAAEAA=</HashCode>
       <FileName>Cell.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ProjectMaze.Wall">
-    <Position X="9.25" Y="7" Width="1.5" />
+    <Position X="11" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAgAAAAMAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAgAQAAEAA=</HashCode>
       <FileName>Cell.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ProjectMaze.Point">
-    <Position X="13.25" Y="3.5" Width="1.5" />
+    <Position X="13" Y="6" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAgAAAIMAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAgAQAIEAA=</HashCode>
       <FileName>Cell.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ProjectMaze.Exit">
-    <Position X="11.25" Y="7" Width="1.5" />
+    <Position X="9" Y="12.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAgAAAIMAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAgAQAIEAA=</HashCode>
       <FileName>Cell.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ProjectMaze.ExitPlayer">
-    <Position X="13.25" Y="7" Width="1.5" />
+    <Position X="11.75" Y="13" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAEAA=</HashCode>
       <FileName>Cell.cs</FileName>

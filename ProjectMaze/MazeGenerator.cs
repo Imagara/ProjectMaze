@@ -1,31 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Threading;
-using System.Windows;
-
 namespace ProjectMaze
 {
-    public class MazeGenerator
+    internal class MazeGenerator
     {
-        //Игровое поле
-        ObservableCollection<ObservableCollection<Cell>> mapCells;
-        //Таймер для движения игрока без повторного нажатия на клавишу передвижения
-        DispatcherTimer pressedKeyTimer { get; set; }
-        //Нажатая клавиша
-        Key currentKey = Key.None;
         #region Maze settings
-
         private int rows, columns, difficultyIndex;
         private bool? isTurnSeedCheckBoxChecked;
         #endregion
 
-        public MazeGenerator(int rows, int columns, bool? isTurnSeedCheckBoxChecked, int difficultyIndex = 0)
+        internal MazeGenerator(int rows, int columns, bool? isTurnSeedCheckBoxChecked, int difficultyIndex = 0)
         {
             this.rows = rows;
             this.columns= columns;
@@ -33,7 +18,7 @@ namespace ProjectMaze
             this.difficultyIndex = difficultyIndex;
         }
 
-        public Cell GenerateRandomEmptyCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
+        internal Cell GenerateRandomEmptyCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
         {
             Random rnd = new Random();
             int x, y;
@@ -58,7 +43,7 @@ namespace ProjectMaze
             Cell emptyCell = new Space(x, y);
             return emptyCell;
         }
-        public List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
+        private List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
         {
             //Дистанция ходьбы
             int walkDist = 2;
@@ -90,7 +75,7 @@ namespace ProjectMaze
             }
             return newlist;
         }
-        public Cell GetWallBetweenCells(Cell first, Cell second)
+        private Cell GetWallBetweenCells(Cell first, Cell second)
         {
             //Получение клетки между двумя другими
             int x, y;
@@ -100,14 +85,14 @@ namespace ProjectMaze
             Cell cell = new Space(first.x + x, first.y + y);
             return cell;
         }
-        public int GetAllPointsCount()
+        internal int GetAllPointsCount()
         {
             //Получение количества семян, которые должны будут сгенерированы(или их общее количество) на карте
             if (isTurnSeedCheckBoxChecked == false)//Если семена отключены 
                 return 0;
-            return Convert.ToInt32(1 + ((difficultyIndex + 1) * 0.75 * ((columns + rows) / 5)));
+            return Convert.ToInt32(1 + ((difficultyIndex + 1) * 0.75 * ((columns + rows)/10)));
         }
-        public Cell GetRandomUnVisitedCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
+        private Cell GetRandomUnVisitedCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
         {
             //Получение случайной не посещенной клетки
             for (int i = 0; i < columnsCount; i += 2)
@@ -120,7 +105,7 @@ namespace ProjectMaze
             }
             return null;
         }
-        public void AddToTraces(Cell cell, List<Cell> traces)
+        private void AddToTraces(Cell cell, List<Cell> traces)
         {
             //Добавление в список с историей пройденных клеток
             traces.Add(cell);
@@ -128,7 +113,7 @@ namespace ProjectMaze
             if (traces.Count > rows / 2 * columns / 2)
                 traces.RemoveAt(0);
         }
-        public Cell MoveBack(List<Cell> traces)
+        private Cell MoveBack(List<Cell> traces)
         {
             //Передвижение на прошлую клетку (из списка с историей пройденных клеток)
             Cell cell = traces.Last();
@@ -136,7 +121,7 @@ namespace ProjectMaze
             return cell;
         }
 
-        public Cell[,] GetGeneratedMap()
+        internal Cell[,] GetGeneratedMap()
         {
             Console.WriteLine($"\n\n\nГенерация...");
 

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,13 +15,18 @@ namespace ProjectMaze
         Player player { get; set; }
         //Таймер для движения игрока без повторного нажатия на клавишу передвижения
         DispatcherTimer pressedKeyTimer { get; set; }
-
+        //Генератор лабиринтов
         MazeGenerator MazeGenerator { get; set; }
         //Нажатая клавиша
         Key currentKey = Key.None;
         #region Maze settings
         //Выбранная сложность
-        int _difficultySelectedIndex = 0;
+        private int _difficultySelectedIndex = 0;
+        // Размер лабиринта (строки)
+        private int _rowsCount = 15;
+        // Размер лабиринта (столбцы)
+        int _columnsCount = 15;
+
         public int DifficultySelectedIndex
         {
             get => _difficultySelectedIndex;
@@ -32,8 +35,6 @@ namespace ProjectMaze
                 _difficultySelectedIndex = value;
             }
         }
-        // Размер лабиринта (строки)
-        int _rowsCount = 15;
         public int RowsCount
         {
             get => (_rowsCount / 2) + 1;
@@ -46,9 +47,7 @@ namespace ProjectMaze
                 else
                     _rowsCount = (value * 2) - 1;
             }
-        }
-        // Размер лабиринта (столбцы)
-        int _columnsCount = 15;
+        }  
         public int ColumnsCount
         {
             get => (_columnsCount / 2) + 1;
@@ -70,7 +69,7 @@ namespace ProjectMaze
             this.DataContext = this;
         }
 
-        private void GetGeneratedMap(object sender, RoutedEventArgs e)
+        private void GenerateMapButton_Click(object sender, RoutedEventArgs e)
         {
             MazeGenerator = new(_rowsCount,_columnsCount, TurnSeedCheckBox.IsChecked, _difficultySelectedIndex);
             Cell[,] mapArray = MazeGenerator.GetGeneratedMap();
@@ -150,20 +149,20 @@ namespace ProjectMaze
                 default: return;
             }
 
-            int X = player.x, Y = player.y;
-            Cell recentPlayerPos = mapCells[Y][X];
+            int x = player.x, y = player.y;
+            Cell recentPlayerPos = mapCells[y][x];
 
-            int nextY = Y + dy, nextX = X + dx;
+            int nextY = y + dy, nextX = x + dx;
 
             //Если целевая точка в пределах лабиринта
             if (nextX < 0 || nextX > _columnsCount - 1)
                 return;
             if (nextY < 0 || nextY > _rowsCount - 1)
                 return;
-            if (mapCells[Y + dy * 2][X + dx * 2] == null)
+            if (mapCells[y + dy * 2][x + dx * 2] == null)
                 return;
 
-            Cell target = mapCells[Y + dy * 2][X + dx * 2];
+            Cell target = mapCells[y + dy * 2][x + dx * 2];
             Cell targetWall = mapCells[nextY][nextX];
 
 
@@ -171,9 +170,9 @@ namespace ProjectMaze
             if (target.IsTransient && targetWall.IsTransient)
             {
                 if (recentPlayerPos is not ExitPlayer && recentPlayerPos is not Exit)
-                    mapCells[Y][X] = new Space(X, Y);
+                    mapCells[y][x] = new Space(x, y);
                 else
-                    mapCells[Y][X] = new Exit(X, Y);
+                    mapCells[y][x] = new Exit(x, y);
 
                 player.y = target.y;
                 player.x = target.x;
