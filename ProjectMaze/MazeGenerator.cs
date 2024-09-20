@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 namespace ProjectMaze
 {
-    public class MazeGenerator
+    internal class MazeGenerator
     {
         #region Maze settings
         private int rows, columns, difficultyIndex;
         private bool? isTurnSeedCheckBoxChecked;
         #endregion
 
-        public MazeGenerator(int rows, int columns, bool? isTurnSeedCheckBoxChecked, int difficultyIndex = 0)
+        internal MazeGenerator(int rows, int columns, bool? isTurnSeedCheckBoxChecked, int difficultyIndex = 0)
         {
             this.rows = rows;
             this.columns= columns;
@@ -18,7 +18,7 @@ namespace ProjectMaze
             this.difficultyIndex = difficultyIndex;
         }
 
-        public Cell GenerateRandomEmptyCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
+        internal Cell GenerateRandomEmptyCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
         {
             Random rnd = new Random();
             int x, y;
@@ -43,7 +43,7 @@ namespace ProjectMaze
             Cell emptyCell = new Space(x, y);
             return emptyCell;
         }
-        public List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
+        internal List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
         {
             //Дистанция ходьбы
             int walkDist = 2;
@@ -75,7 +75,7 @@ namespace ProjectMaze
             }
             return newlist;
         }
-        public Cell GetWallBetweenCells(Cell first, Cell second)
+        internal Cell GetWallBetweenCells(Cell first, Cell second)
         {
             //Получение клетки между двумя другими
             int x, y;
@@ -105,7 +105,7 @@ namespace ProjectMaze
             }
             return null;
         }
-        public void AddToTraces(Cell cell, List<Cell> traces)
+        internal void AddToTraces(Cell cell, List<Cell> traces)
         {
             //Добавление в список с историей пройденных клеток
             traces.Add(cell);

@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace ProjectMaze
 {
-    public abstract class Cell : INotifyPropertyChanged
+    internal abstract class Cell : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -81,7 +81,7 @@ namespace ProjectMaze
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
-    public class Space : Cell
+    internal class Space : Cell
     {
         //Конструктор пустой клетки (Проходимой)
         public Space(int x, int y, bool isVisited = false) : base(x, y)
@@ -92,7 +92,7 @@ namespace ProjectMaze
         public override bool IsTransient => true;
     }
 
-    public class Player : Cell
+    internal class Player : Cell
     {
         //Вид ячейки - курочка
         string _file = "player.png";
@@ -136,7 +136,7 @@ namespace ProjectMaze
             }
         }
     }
-    public class Wall : Cell
+    internal class Wall : Cell
     {
         //Вид ячейки - стена (непроходимая)
         string _file = "wall.png";
@@ -166,7 +166,7 @@ namespace ProjectMaze
             }
         }
     }
-    public class Point : Cell
+    internal class Point : Cell
     {
         public override bool IsTransient => true;
         //Вид ячейки - семечко
@@ -197,7 +197,7 @@ namespace ProjectMaze
             }
         }
     }
-    public class Exit : Cell
+    internal class Exit : Cell
     {
         public override bool IsTransient => true;
         private string _file = "exit.png";
@@ -228,7 +228,7 @@ namespace ProjectMaze
             }
         }
     }
-    public class ExitPlayer : Exit
+    internal class ExitPlayer : Exit
     {
         //Вид ячейки - игрок в выходе
         private string _file = "player_exit.png";
