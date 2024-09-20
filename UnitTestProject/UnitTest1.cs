@@ -48,7 +48,7 @@ namespace UnitTestProject
         {
             Cell expected = new Space(2, 2);
 
-            Cell RandomEmptyCell = generator.GenerateRandomEmptyCell(testArray, 3, 3);
+            Cell RandomEmptyCell = generator.GenerateRandomEmptyCell(testArray);
             Assert.IsTrue(RandomEmptyCell.x == expected.x && RandomEmptyCell.y == expected.y);
         }
         [TestMethod]

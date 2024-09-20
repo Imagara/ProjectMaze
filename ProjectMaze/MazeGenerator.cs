@@ -18,24 +18,17 @@ namespace ProjectMaze
             this.difficultyIndex = difficultyIndex;
         }
 
-        internal Cell GenerateRandomEmptyCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
+        internal Cell GenerateRandomEmptyCell(Cell[,] mapArray)
         {
             Random rnd = new Random();
             int x, y;
 
-
-            if (columnsCount == 0 || rowsCount == 0)
-            {
-                columnsCount = rows;
-                rowsCount = rows;
-            }
-
             do // Нахождение свободной ячейки
             {
-                x = rnd.Next(0, columnsCount - 1);
+                x = rnd.Next(0, columns - 1);
                 if (x % 2 != 0)
                     x++;
-                y = rnd.Next(0, rowsCount - 1);
+                y = rnd.Next(0, rows - 1);
                 if (y % 2 != 0)
                     y++;
             } while (mapArray[x, y] is not Space);
@@ -92,12 +85,12 @@ namespace ProjectMaze
                 return 0;
             return Convert.ToInt32(1 + ((difficultyIndex + 1) * 0.75 * ((columns + rows)/10)));
         }
-        private Cell GetRandomUnVisitedCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
+        private Cell GetRandomUnvisitedCell(Cell[,] mapArray)
         {
             //Получение случайной не посещенной клетки
-            for (int i = 0; i < columnsCount; i += 2)
+            for (int i = 0; i < columns; i += 2)
             {
-                for (int j = 0; j < rowsCount; j += 2)
+                for (int j = 0; j < rows; j += 2)
                 {
                     if (mapArray[i, j] == null)
                         return new Space(i, j);
@@ -173,10 +166,10 @@ namespace ProjectMaze
                     currentCell = MoveBack(traces);
                     Console.WriteLine($"Возврат на [{currentCell.x}][{currentCell.y}]");
                 }
-                else if (GetRandomUnVisitedCell(mapArray) != null)
+                else if (GetRandomUnvisitedCell(mapArray) != null)
                 {
                     //Генерация следующей клетки случайно
-                    currentCell = GetRandomUnVisitedCell(mapArray);
+                    currentCell = GetRandomUnvisitedCell(mapArray);
                     Console.WriteLine($"Переход к следующей случайной клетке: [{currentCell.x}][{currentCell.y}]");
                     isRandomGenerated = true;
                 }

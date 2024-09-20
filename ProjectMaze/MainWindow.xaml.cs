@@ -105,7 +105,12 @@ namespace ProjectMaze
         #region Player movement 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.IsRepeat || e.Key == Key.None || player == null)
+            if (player == null)
+            {
+                Console.WriteLine("Игрок на поле не найден.");
+                return;
+            }
+            if (e.IsRepeat || e.Key == Key.None)
                 return;
 
             switch (e.Key)
