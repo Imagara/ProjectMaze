@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="ProjectMaze.MazeGenerator">
-    <Position X="5.25" Y="6.5" Width="1.5" />
+    <Position X="6.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAIQAwEBACEAAAAABAAAAAAAAAAAYBCAAAAAAABgA=</HashCode>
+      <HashCode>AAAAIQAwEBAAAAAAAABAAAAAAAAAAAQBCAAAAAAABgA=</HashCode>
       <FileName>MazeGenerator.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ProjectMaze.MainWindow">
-    <Position X="5.25" Y="12" Width="1.5" />
+    <Position X="6.25" Y="10.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABACAQAAAIACEAABAAAACgAAAAAABAIBAAAAAAARIIA=</HashCode>
+      <HashCode>ABBCAAAAAIACEAABAAAACgAAAAAABAIBAAAAAAARIIA=</HashCode>
       <FileName>MainWindow.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -24,21 +24,21 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ProjectMaze.Space">
-    <Position X="11.25" Y="7.75" Width="1.5" />
+    <Position X="11" Y="8.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
       <FileName>Cell.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ProjectMaze.Player">
-    <Position X="12.75" Y="9.75" Width="1.5" />
+    <Position X="13" Y="9.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAABIAAAAAAAgAAAgAAAAAAAAAAEAAAAAAAAAAAAEAA=</HashCode>
       <FileName>Cell.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ProjectMaze.Wall">
-    <Position X="11" Y="3.25" Width="1.5" />
+    <Position X="11" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAgAQAAEAA=</HashCode>
       <FileName>Cell.cs</FileName>
@@ -59,7 +59,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ProjectMaze.ExitPlayer">
-    <Position X="11.75" Y="13" Width="1.5" />
+    <Position X="13" Y="13" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAEAA=</HashCode>
       <FileName>Cell.cs</FileName>

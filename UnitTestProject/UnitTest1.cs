@@ -8,6 +8,7 @@ namespace UnitTestProject
     [TestClass]
     public class UnitTest1
     {
+        MazeGenerator generator = new MazeGenerator(5, 5, false);
         // □ ■ 🐔
         // □ ■  □
         //🚪 □  □
@@ -40,14 +41,14 @@ namespace UnitTestProject
             cells.Add(cell2);
 
             Cell expected = cell2;
-            Assert.AreEqual(new MainWindow().MoveBack(cells), expected);
+            Assert.AreEqual(generator.MoveBack(cells), expected);
         }
         [TestMethod]
         public void GenerateRandomEmptyPositionTest()
         {
             Cell expected = new Space(2, 2);
 
-            Cell RandomEmptyCell = new MainWindow().GenerateRandomEmptyCell(testArray, 3, 3);
+            Cell RandomEmptyCell = generator.GenerateRandomEmptyCell(testArray, 3, 3);
             Assert.IsTrue(RandomEmptyCell.x == expected.x && RandomEmptyCell.y == expected.y);
         }
         [TestMethod]
@@ -61,7 +62,7 @@ namespace UnitTestProject
 
             Cell cell = new Space(0, 0);
 
-            List<Cell> listNeighbours = new MainWindow().GetNeighbours(cell, 3, 3, testArray, false);
+            List<Cell> listNeighbours = generator.GetNeighbours(cell, 3, 3, testArray, false);
 
             Assert.IsTrue(string.Join("|", listNeighbours.Select(item => item.x + " " + item.y)).ToString()
                 == string.Join("|", expected.Select(item => item.x + " " + item.y)).ToString());
@@ -73,7 +74,7 @@ namespace UnitTestProject
             Cell cell2 = new Space(2, 0);
             Cell expected = new Space(1, 0);
 
-            Cell WallBetweenCells = new MainWindow().GetWallBetweenCells(cell1, cell2);
+            Cell WallBetweenCells = generator.GetWallBetweenCells(cell1, cell2);
 
             Assert.IsTrue(WallBetweenCells.x == expected.x && WallBetweenCells.y == expected.y);
         }
@@ -86,7 +87,7 @@ namespace UnitTestProject
 
             List<Cell> traces = new();
 
-            new MainWindow().AddToTraces(testCell, traces);
+            generator.AddToTraces(testCell, traces);
             Assert.AreEqual(string.Join("|", traces).ToString(), string.Join("|", expected).ToString());
         }
     }

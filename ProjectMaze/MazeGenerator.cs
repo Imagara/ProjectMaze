@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 namespace ProjectMaze
 {
-    internal class MazeGenerator
+    public class MazeGenerator
     {
         #region Maze settings
         private int rows, columns, difficultyIndex;
         private bool? isTurnSeedCheckBoxChecked;
         #endregion
 
-        internal MazeGenerator(int rows, int columns, bool? isTurnSeedCheckBoxChecked, int difficultyIndex = 0)
+        public MazeGenerator(int rows, int columns, bool? isTurnSeedCheckBoxChecked, int difficultyIndex = 0)
         {
             this.rows = rows;
             this.columns= columns;
@@ -18,7 +18,7 @@ namespace ProjectMaze
             this.difficultyIndex = difficultyIndex;
         }
 
-        internal Cell GenerateRandomEmptyCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
+        public Cell GenerateRandomEmptyCell(Cell[,] mapArray, int columnsCount = 0, int rowsCount = 0)
         {
             Random rnd = new Random();
             int x, y;
@@ -43,7 +43,7 @@ namespace ProjectMaze
             Cell emptyCell = new Space(x, y);
             return emptyCell;
         }
-        private List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
+        public List<Cell> GetNeighbours(Cell cell, int width, int height, Cell[,] mapArray, bool isVisitedCheck = true)
         {
             //Дистанция ходьбы
             int walkDist = 2;
@@ -75,7 +75,7 @@ namespace ProjectMaze
             }
             return newlist;
         }
-        private Cell GetWallBetweenCells(Cell first, Cell second)
+        public Cell GetWallBetweenCells(Cell first, Cell second)
         {
             //Получение клетки между двумя другими
             int x, y;
@@ -105,7 +105,7 @@ namespace ProjectMaze
             }
             return null;
         }
-        private void AddToTraces(Cell cell, List<Cell> traces)
+        public void AddToTraces(Cell cell, List<Cell> traces)
         {
             //Добавление в список с историей пройденных клеток
             traces.Add(cell);
@@ -113,7 +113,7 @@ namespace ProjectMaze
             if (traces.Count > rows / 2 * columns / 2)
                 traces.RemoveAt(0);
         }
-        private Cell MoveBack(List<Cell> traces)
+        public Cell MoveBack(List<Cell> traces)
         {
             //Передвижение на прошлую клетку (из списка с историей пройденных клеток)
             Cell cell = traces.Last();
